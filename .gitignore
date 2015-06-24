@@ -1,0 +1,3 @@
+/config/database.yml
+/db/db_development.sqlite3
+/db/db_test.sqlite3

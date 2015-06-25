@@ -11,7 +11,7 @@ module OnlineKitchen
   class << self
 
     def env
-      ENV['ENV'] || ENV['RAILS_ENV'] || ENV['APP_ENV'] || 'development'
+      ENV['ENV'] || ENV['RACK_ENV'] || ENV['RAILS_ENV'] || ENV['APP_ENV'] || 'development'
     end
 
     def logger

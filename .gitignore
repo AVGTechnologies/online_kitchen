@@ -1,3 +1,4 @@
 /config/database.yml
+/.vagrant
 /db/db_development.sqlite3
 /db/db_test.sqlite3

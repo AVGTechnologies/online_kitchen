@@ -6,6 +6,7 @@ require 'online_kitchen/config'
 require 'online_kitchen/database'
 
 require 'models/configuration'
+require 'models/machine'
 
 module OnlineKitchen
   class << self

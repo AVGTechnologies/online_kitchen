@@ -40,10 +40,12 @@ class Machine < ActiveRecord::Base
   private
     def environment_has_allowed_structure
       return if self.environment.nil?
+
       unless Hash === environment
         errors.add(:environment, "has to be Hash (key-value) like structure")
         return false
       end
+
       environment.each do |key, value|
         unless key =~ /\A[A-Za-z][A-Za-z0-9_]*\z/
           errors.add(:environment, "keys has to be Literal (e.g. start on letter followed by letter, digits or underscore)")

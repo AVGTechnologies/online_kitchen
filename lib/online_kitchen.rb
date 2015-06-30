@@ -6,6 +6,7 @@ require 'strip_attributes'
 require 'settingslogic'
 require 'online_kitchen/config'
 require 'online_kitchen/database'
+require 'online_kitchen/labmanager'
 
 module OnlineKitchen
   class << self

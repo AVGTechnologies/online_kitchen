@@ -4,7 +4,20 @@ module OnlineKitchen
       {
         sentry_dsn: '',
         log_level: Logger::DEBUG,
-        time_zone: :utc
+        time_zone: :utc,
+        soap_config: {
+          service_config: {
+            log_level: :debug,
+            env_namespace: :s,
+            namespace_identifier: nil,
+            pretty_print_xml: true,
+            log: true,
+            element_form_default: :qualified,
+            open_timeout: 1200,
+            read_timeout: 1600
+          },
+          service_endpoint: 'http://10.5.0.26:8732/AVG.Ddtf.LabManager.Ivo/'
+        }
       }
     end
   end

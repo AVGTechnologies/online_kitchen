@@ -3,6 +3,11 @@ class CreateMachines < ActiveRecord::Migration
     create_table :machines do |t|
       t.string :name
       t.string :template
+      t.string :state
+
+      t.string :ip #TODO check inet type
+      t.string :provider_id
+
       t.text :environment
       t.references :configuration
 

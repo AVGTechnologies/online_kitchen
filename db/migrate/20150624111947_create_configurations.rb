@@ -2,6 +2,8 @@ class CreateConfigurations < ActiveRecord::Migration
   def change
     create_table :configurations do |t|
       t.string :name, null: false, default: ""
+      t.string :state
+      t.string :folder_name
 
       t.timestamps null: false
     end

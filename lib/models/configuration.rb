@@ -14,4 +14,17 @@ class Configuration < ActiveRecord::Base
   validates :name, presence: true, uniqueness: true, length: {minimum: 3}
 
   strip_attributes
+
+  def state
+    states = machines.pluck(:state).uniq
+
+    case states
+      when ['ready']
+        'ready'
+      when ['destroy_queued']
+        'destroy_queued'
+      else
+        'updating'
+    end
+  end
 end

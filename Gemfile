@@ -15,6 +15,8 @@ gem 'annotate', '~> 2.6.6'
 
 gem 'strip_attributes', '~> 1.7.0'
 
+gem 'rack'
+gem 'rack-contrib'
 gem 'sinatra', '~> 1.4.6'
 gem 'sinatra-contrib', '~> 1.4.4'
 

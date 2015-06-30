@@ -1,62 +1,58 @@
 # Service providing the Online Kitchen functionality
 
 $: << 'lib'
-require 'sinatra/base'
 require 'bundler/setup'
+
+require 'rack'
+require 'rack/contrib'
+require 'sinatra/base'
+require "sinatra/namespace"
+
 require 'online_kitchen'
 require 'active_support'
 
 module OnlineKitchen
   class App < Sinatra::Base
 
-    set :bind, '0.0.0.0'
+    register Sinatra::Namespace
+    set :bind, OnlineKitchen.config[:bind]
+    use Rack::PostBodyContentTypeParser
 
-    # TODO: namespace '/api/v1/' do
-      get '/api/v1/templates' do
-        common_request_setup
-        OnlineKitchenTemplate.all.to_json
+    before { auth }
+    before do
+      content_type 'application/json'
+      response['Access-Control-Allow-Origin'] = OnlineKitchen.config[:allowed_origin]
+    end
+
+    namespace OnlineKitchen.config[:base_url] do
+      get '/templates' do
+        OnlineKitchenTemplate.all.as_json
       end
 
-      post '/api/v1/configurations' do
-        common_request_setup
-        @configuration_specification = get_body_as_json
+      get '/configurations' do
       end
 
-      get '/api/v1/configurations' do
-        common_request_setup
+      post '/configurations' do
       end
 
-      put '/api/v1/configurations' do
-        common_request_setup
-        @configuration_modification = get_body_as_json
+      put '/configurations/:id' do |id|
+        params.inspect
       end
 
-      delete '/api/v1/configurations/:configuration_id' do |configuration_id|
-        common_request_setup
+      delete '/configurations/:id' do |id|
       end
-    #end
+
+    end
 
     private
 
     def auth
-      @userName = headers['userName']
-      @authenticationToken = headers['authenticationToken']
+      @userName = env['HTTP_USERNAME']
+      @authenticationToken = env['HTTP_AUTHENTICATIONTOKEN']
 
-      unless @userName.blank? && @authenticationToken.blank?
-        status 401
-        {:result => 'error', :message => "Invalid user credentials"}.to_json
+      if @userName.blank? or @authenticationToken.blank?
+        halt 401, {:result => 'error', :message => "Invalid user credentials"}.to_json
       end
-    end
-
-    def common_request_setup
-      auth
-      content_type :json
-      response['Access-Control-Allow-Origin'] = '*'
-    end
-
-    def get_body_as_json
-      request.body.rewind
-      JSON.parse request.body.read
     end
 
     run! if app_file == $0 # This makes the app launchanble like "ruby app.rb"

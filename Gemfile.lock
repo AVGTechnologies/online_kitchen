@@ -80,6 +80,8 @@ GEM
       mini_portile (~> 0.6.0)
     nori (2.6.0)
     rack (1.6.0)
+    rack-contrib (1.2.0)
+      rack (>= 0.9.1)
     rack-protection (1.5.3)
       rack
     rack-test (0.6.3)
@@ -171,6 +173,8 @@ DEPENDENCIES
   activesupport
   annotate (~> 2.6.6)
   nokogiri (~> 1.6.6)
+  rack
+  rack-contrib
   rails
   rspec
   savon (~> 2.11)
@@ -180,3 +184,6 @@ DEPENDENCIES
   sinatra-contrib (~> 1.4.4)
   sqlite3
   strip_attributes (~> 1.7.0)
+
+BUNDLED WITH
+   1.10.5

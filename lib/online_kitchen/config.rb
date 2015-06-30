@@ -5,6 +5,9 @@ module OnlineKitchen
         sentry_dsn: '',
         log_level: Logger::DEBUG,
         time_zone: :utc,
+        allowed_origin: '*',
+        bind: '0.0.0.0',
+        base_url: '/api/v1',
         soap_config: {
           service_config: {
             log_level: :debug,

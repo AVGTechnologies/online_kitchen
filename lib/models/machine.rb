@@ -37,6 +37,12 @@ class Machine < ActiveRecord::Base
 
   strip_attributes :except => :environment
 
+  delegate :user, :folder_name, to: :configuration
+
+  def job_id
+   "%d.%d" % [configuration.id, id]
+  end
+
   private
     def environment_has_allowed_structure
       return if self.environment.nil?

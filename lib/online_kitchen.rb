@@ -2,11 +2,10 @@ require 'yaml'
 require 'logger'
 require 'active_record'
 require 'raven'
+require 'strip_attributes'
+require 'settingslogic'
 require 'online_kitchen/config'
 require 'online_kitchen/database'
-
-require 'models/configuration'
-require 'models/machine'
 
 module OnlineKitchen
   class << self
@@ -19,7 +18,7 @@ module OnlineKitchen
       @logger ||= Logger.new(STDOUT)
     end
 
-    def root_path
+    def root
       File.expand_path('../..', __FILE__)
     end
 
@@ -37,4 +36,6 @@ module OnlineKitchen
     end
 
   end
+
+  require 'models'
 end

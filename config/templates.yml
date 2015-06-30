@@ -1,0 +1,92 @@
+default: &defaults
+  templates:
+    - alvin.TA_VISTAx64
+    - alvin.TA_7x64
+    - alvin.TA_7x86
+    - alvin.TA_XPx64
+    - alvin.TA_XPx86
+    - alvin.TA_VISTAx86
+    - alvin.TA_2k8x86
+    - alvin.TA_2k8x64-R2-SP1
+    - alvin.TA_2k8x64
+    - alvin2.TA_2k3x86
+    - alvin.TA_2k3x64
+    - alvin.TA_8x86
+    - alvin.TA_8x64
+    - alvin.TA_8.1x86
+    - alvin.TA_8.1x64
+    - alvin.TA_2k12x64
+    - alvin2.TA_XPx86-FAT
+    - alvin2.IL_7x64
+    - alvin2.IL_XPx86
+    - alvin2.IL_7x86
+    - alvin2.IL_8.1x64
+    - alvin2.IL_10x86
+    - alvin2.IL_10x64
+    - alvin.TA_7x64_Emulators
+    - toby.TA_XPx86
+    - toby.TA_8x64
+    - toby.TA_7x64
+    - toby.TA_8x86
+    - toby.TA_8.1x64
+    - toby.TA_2k8x64-R2-SP1
+    - toby.TA_VISTAx86
+    - toby.TA_VISTAx64
+    - toby.TA_7x86
+    - toby.TA_XPx64
+    - toby.TA_2k12x64
+    - toby.TA_2k8x86
+    - toby.TA_2k8x64
+    - toby.TA_8.1x86
+    - toby.TA_2k12x64-7HDDs
+    - toby.TA_7x64-7HDDs
+    - toby.TA_8x64-7HDDs
+    - toby.TA_8x86-7HDDs
+    - toby.TA_XPx86-7HDDs
+    - toby.TA_2k3x64
+    - toby.TA_10x64
+    - toby.TA_10x86
+    - kraken.TA_XPx86
+    - kraken.TA_8x64
+    - kraken.TA_7x64
+    - kraken.TA_8x86
+    - kraken.TA_8.1x64
+    - kraken.TA_2k8x64-R2-SP1
+    - kraken.TA_VISTAx86
+    - kraken.TA_VISTAx64
+    - kraken.TA_7x86
+    - kraken.TA_XPx64
+    - kraken.TA_2k12x64
+    - kraken.TA_2k8x86
+    - kraken.TA_2k8x64
+    - kraken.TA_8.1x86
+    - kraken.TA_2k3x64
+    - kraken.TA_10x64
+    - kraken.TA_10x86
+    - kraken.IDP_7x64
+    - kraken.IDP_7x86
+    - kraken.IDP_81x64
+    - kraken.IDP_81x86
+    - kraken.IDP_8x64
+    - kraken.IDP_8x86
+    - kraken.IDP_XPx86
+    - kraken.IDP_10x64
+    - kraken.IDP_10x86
+    - kraken.CORE_7x64
+    - kraken.CORE_7x64_2CPU
+    - bacc.TA_SSD_2k12x64
+    - bacc.TA_SSD_7x64
+    - bacc.TA_SSD_7x86
+    - bacc.TA_SSD_8.1x64
+    - bacc.TA_SSD_XPx86
+    - bacc.TA_SSD_VISTAx86
+
+
+production:
+  <<: *defaults
+
+development:
+  <<: *defaults
+
+test:
+  <<: *defaults

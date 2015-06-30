@@ -130,6 +130,7 @@ GEM
       nokogiri (>= 1.4.0)
       nori (~> 2.4)
       wasabi (~> 3.4)
+    settingslogic (2.0.9)
     sinatra (1.4.6)
       rack (~> 1.4)
       rack-protection (~> 1.4)
@@ -167,12 +168,14 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord
+  activesupport
   annotate (~> 2.6.6)
   nokogiri (~> 1.6.6)
   rails
   rspec
   savon (~> 2.11)
   sentry-raven!
+  settingslogic (~> 2.0.9)
   sinatra (~> 1.4.6)
   sinatra-contrib (~> 1.4.4)
   sqlite3

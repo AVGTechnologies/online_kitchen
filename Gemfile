@@ -17,3 +17,7 @@ gem 'strip_attributes', '~> 1.7.0'
 
 gem 'sinatra', '~> 1.4.6'
 gem 'sinatra-contrib', '~> 1.4.4'
+
+gem "activesupport"
+
+gem "settingslogic", '~> 2.0.9'

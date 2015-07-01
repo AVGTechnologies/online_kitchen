@@ -5,6 +5,7 @@ gem "activerecord"
 gem 'sqlite3'
 
 gem 'sentry-raven',    github: 'getsentry/raven-ruby'
+gem 'metriks'
 
 gem 'rspec'
 

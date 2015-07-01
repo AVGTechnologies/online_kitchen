@@ -3,6 +3,9 @@ class OnlineKitchen::LabManagerProvision
 
   def perform(machine_id)
     machine = Machine.find(machine_id)
+
+    return if machine.state == 'destroy_queued'
+
     #TODO marks time to graphite
     vm = OnlineKitchen::LabManager.create(builder(machine))
     machine.reload #labmanage takes too long, model could be changed

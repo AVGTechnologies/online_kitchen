@@ -6,6 +6,8 @@ require 'strip_attributes'
 require 'settingslogic'
 require 'online_kitchen/database'
 require 'online_kitchen/labmanager'
+require 'metriks'
+require 'metriks/reporter/graphite'
 
 module OnlineKitchen
   class << self
@@ -29,14 +31,22 @@ module OnlineKitchen
     def setup
       OnlineKitchen::Database.connect
 
-      Logger.level = OnlineKitchen.config.log_level || Logger::WARN
+      Logger.level = config.log_level || Logger::WARN
 
-      if env == 'production'
+      if config.sentry_dsn && env == 'production'
         ::Raven.configure do |config|
           config.dsn = OnlineKitchen.config.sentry_dsn
           config.excluded_exceptions = %w{Siatra::NotFound}
         end
       end
+
+      Metriks::Reporter::Graphite.new(
+        config.graphite.host,
+        config.graphite.port,
+        config.graphite.options || {}
+      ) if config.graphite
+
+
     end
   end
 

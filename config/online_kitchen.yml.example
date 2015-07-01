@@ -1,11 +1,15 @@
 default: &defaults
-  sentry_dsn: ''
+  sentry_dsn: 'https://1ded99b8732a4cdf86ea8de6994a7fbd:271b3e15c9ac4f30bf7c3bcf5f912bd3@final-ci.cz.avg.com:10443/16'
   log_level: Logger::DEBUG
   time_zone: :utc
   allowed_origin: '*'
   bind: '0.0.0.0'
   base_url: '/api/v1'
+  graphite:
+    host: eelk-graphite-dev-idc-prg001.mgm.avg.com
+    port: 2003
   soap_config:
+    options: {}
     service_config:
       log_level: :debug
       env_namespace: :s
@@ -15,7 +19,7 @@ default: &defaults
       element_form_default: :qualified
       open_timeout: 1200
       read_timeout: 1600
-    service_endpoint: 'http://10.5.0.26:8732/AVG.Ddtf.LabManager.Ivo/'  
+    service_endpoint: 'http://10.5.0.26:8732/AVG.Ddtf.LabManager.Ivo/'
 
 production:
   <<: *defaults

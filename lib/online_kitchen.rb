@@ -4,10 +4,9 @@ require 'active_record'
 require 'raven'
 require 'strip_attributes'
 require 'settingslogic'
-require 'online_kitchen/database'
-require 'online_kitchen/labmanager'
 require 'metriks'
 require 'metriks/reporter/graphite'
+require 'sidekiq'
 
 module OnlineKitchen
   class << self
@@ -21,7 +20,7 @@ module OnlineKitchen
     end
 
     def logger
-      @logger ||= Logger.new(STDOUT)
+      @logger ||= Logger.new("#{root}/log/#{env}.log")
     end
 
     def root
@@ -31,7 +30,11 @@ module OnlineKitchen
     def setup
       OnlineKitchen::Database.connect
 
-      Logger.level = config.log_level || Logger::WARN
+      logger.level = config.log_level || Logger::WARN
+
+      if config.log_level == Logger::DEBUG
+        Sidekiq.default_worker_options = { 'backtrace' => true }
+      end
 
       if config.sentry_dsn && env == 'production'
         ::Raven.configure do |config|
@@ -51,5 +54,11 @@ module OnlineKitchen
   end
 
   require 'online_kitchen/config'
+  require 'online_kitchen/database'
+
   require 'models'
+
+  require 'online_kitchen/labmanager'
+  require 'online_kitchen/workers/lab_manager_provision'
+  require 'online_kitchen/workers/lab_manager_release'
 end

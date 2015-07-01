@@ -3,7 +3,7 @@ class CreateMachines < ActiveRecord::Migration
     create_table :machines do |t|
       t.string :name
       t.string :template
-      t.string :state
+      t.string :state,     default: 'queued'
 
       t.string :ip #TODO check inet type
       t.string :provider_id

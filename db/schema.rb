@@ -16,7 +16,7 @@ ActiveRecord::Schema.define(version: 20150630142339) do
   create_table "configurations", force: :cascade do |t|
     t.string   "name",        default: "", null: false
     t.string   "folder_name"
-    t.string   "user",        default: "", null: false
+    t.integer  "user_id"
     t.datetime "created_at",               null: false
     t.datetime "updated_at",               null: false
   end
@@ -26,13 +26,13 @@ ActiveRecord::Schema.define(version: 20150630142339) do
   create_table "machines", force: :cascade do |t|
     t.string   "name"
     t.string   "template"
-    t.string   "state"
+    t.string   "state",            default: "queued"
     t.string   "ip"
     t.string   "provider_id"
     t.text     "environment"
     t.integer  "configuration_id"
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
   end
 
   create_table "users", force: :cascade do |t|

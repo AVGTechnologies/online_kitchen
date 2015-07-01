@@ -13,7 +13,6 @@ class Configuration < ActiveRecord::Base
   belongs_to :user
 
   validates :name, presence: true, uniqueness: true, length: {minimum: 3}
-  validates :user, presence: true, uniqueness: true, length: {minimum: 7}
 
   strip_attributes
 

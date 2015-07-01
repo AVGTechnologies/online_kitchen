@@ -3,6 +3,7 @@ source "https://rubygems.org"
 gem "rails",          require: nil
 gem "activerecord"
 gem 'sqlite3'
+gem 'sidekiq'
 
 gem 'sentry-raven',    github: 'getsentry/raven-ruby'
 gem 'metriks'

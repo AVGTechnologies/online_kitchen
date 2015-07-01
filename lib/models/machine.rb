@@ -23,13 +23,13 @@ class Machine < ActiveRecord::Base
       message: "only allows letters, digits, underscore and dots"
     }
 
-  validates :template,
-    presence: true,
-    length: {minimum: 3}, # TODO: Validate format cluster.name
-    format: {
-      with: /\A[A-Za-z]{1,10}\.[A-Za-z0-9_]+\z/,
-      message: "cluster and name separated by dot, letters only"
-    }
+  #validates :template,
+  #  presence: true,
+  #  length: {minimum: 3}, # TODO: Validate format cluster.name
+  #  format: {
+  #    with: /\A[A-Za-z]{1,10}\.[A-Za-z0-9_]+\z/,
+  #    message: "cluster and name separated by dot, letters only"
+  #  }
 
   validates :state, inclusion: { in: %w(queued ready destroy_queued) }
   validate :environment_has_allowed_structure

@@ -17,7 +17,7 @@ gem 'strip_attributes', '~> 1.7.0'
 
 gem 'rack'
 gem 'rack-contrib'
-gem 'sinatra', '~> 1.4.6'
+gem 'sinatra', '~> 1.4.6', require: 'sinatra/base' #see https://github.com/resque/resque/issues/934
 gem 'sinatra-contrib', '~> 1.4.4'
 
 gem "activesupport"

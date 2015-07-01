@@ -6,8 +6,8 @@ require 'online_kitchen'
 include ActiveRecord::Tasks
 
 DatabaseTasks.env = Rails.env
-DatabaseTasks.db_dir = File.join(Rails.root, 'config')
 DatabaseTasks.database_configuration = OnlineKitchen::Database.config
+DatabaseTasks.db_dir = File.join(Rails.root, 'db')
 DatabaseTasks.migrations_paths = File.join(Rails.root, 'db', 'migrate')
 
 task :environment do

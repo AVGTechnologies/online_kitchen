@@ -10,6 +10,10 @@ require 'online_kitchen/labmanager'
 module OnlineKitchen
   class << self
 
+    def config
+      OnlineKitchen::Config
+    end
+
     def env
       ENV['ENV'] || ENV['RACK_ENV'] || ENV['RAILS_ENV'] || ENV['APP_ENV'] || 'development'
     end
@@ -25,17 +29,17 @@ module OnlineKitchen
     def setup
       OnlineKitchen::Database.connect
 
-      Logger.level = OnlineKitchenConfig.log_level || Logger::WARN
+      Logger.level = OnlineKitchen.config.log_level || Logger::WARN
 
       if env == 'production'
         ::Raven.configure do |config|
-          config.dsn = OnlineKitchenConfig.sentry_dsn
-          config.excluded_exceptions = %w{atra::NotFound}
+          config.dsn = OnlineKitchen.config.sentry_dsn
+          config.excluded_exceptions = %w{Siatra::NotFound}
         end
       end
     end
-
   end
 
+  require 'online_kitchen/config'
   require 'models'
 end

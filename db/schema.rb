@@ -11,12 +11,36 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150624111947) do
+ActiveRecord::Schema.define(version: 20150630142339) do
 
   create_table "configurations", force: :cascade do |t|
-    t.string   "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string   "name",        default: "", null: false
+    t.string   "folder_name"
+    t.string   "user",        default: "", null: false
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
   end
+
+  add_index "configurations", ["name"], name: "index_configurations_on_name", unique: true
+
+  create_table "machines", force: :cascade do |t|
+    t.string   "name"
+    t.string   "template"
+    t.string   "state"
+    t.string   "ip"
+    t.string   "provider_id"
+    t.text     "environment"
+    t.integer  "configuration_id"
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string   "name",       default: "", null: false
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
+  end
+
+  add_index "users", ["name"], name: "index_users_on_name", unique: true
 
 end

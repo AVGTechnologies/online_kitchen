@@ -47,7 +47,7 @@ module OnlineKitchen
       end
 
       def client_config
-        soap_config = OnlineKitchenConfig.soap_config
+        soap_config = OnlineKitchen.config.soap_config
         raise "soap.service_endpoint must be specified in the config!" if soap_config[:service_endpoint].blank?
         res = {
           env_namespace: :s,

@@ -15,16 +15,16 @@ module OnlineKitchen
   class App < Sinatra::Base
 
     register Sinatra::Namespace
-    set :bind, OnlineKitchenConfig.bind
+    set :bind, OnlineKitchen.config.bind
     use Rack::PostBodyContentTypeParser
 
     before { auth }
     before do
       content_type 'application/json'
-      response['Access-Control-Allow-Origin'] = OnlineKitchenConfig.allowed_origin
+      response['Access-Control-Allow-Origin'] = OnlineKitchen.config.allowed_origin
     end
 
-    namespace OnlineKitchenConfig.base_url do
+    namespace OnlineKitchen.config.base_url do
       get '/templates' do
         OnlineKitchenTemplate.all.as_json
       end

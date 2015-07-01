@@ -4,7 +4,6 @@ require 'active_record'
 require 'raven'
 require 'strip_attributes'
 require 'settingslogic'
-require 'online_kitchen/config'
 require 'online_kitchen/database'
 require 'online_kitchen/labmanager'
 
@@ -26,11 +25,11 @@ module OnlineKitchen
     def setup
       OnlineKitchen::Database.connect
 
-      Logger.level = OnlineKitchen.config[:log_level] || Logger::WARN
+      Logger.level = OnlineKitchenConfig.log_level || Logger::WARN
 
       if env == 'production'
         ::Raven.configure do |config|
-          config.dsn = OnlineKitchen.config[:sentry_dsn]
+          config.dsn = OnlineKitchenConfig.sentry_dsn
           config.excluded_exceptions = %w{atra::NotFound}
         end
       end

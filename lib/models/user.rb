@@ -1,5 +1,5 @@
 class User < ActiveRecord::Base
-  has_many :configuration, inverse_of: :user
+  has_many :configurations, inverse_of: :user
 
   validates :name,
     presence: true,

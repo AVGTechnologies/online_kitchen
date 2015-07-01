@@ -16,6 +16,12 @@ class Configuration < ActiveRecord::Base
 
   strip_attributes
 
+  def as_json(options = {})
+    #TODO: set only proper attributes
+    #see http://jonathanjulian.com/2010/04/rails-to_json-or-as_json/
+    super(:include => [:machines])
+  end
+
   def state
     states = machines.pluck(:state).uniq
 

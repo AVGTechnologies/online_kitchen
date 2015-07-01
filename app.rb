@@ -11,6 +11,8 @@ require "sinatra/namespace"
 require 'online_kitchen'
 require 'active_support'
 
+OnlineKitchen.setup
+
 module OnlineKitchen
   class App < Sinatra::Base
 
@@ -37,22 +39,31 @@ module OnlineKitchen
       end
 
       get '/templates' do
-        OnlineKitchenTemplate.all.as_json
+        OnlineKitchenTemplate.all.to_json
       end
 
       get '/configurations' do
+        current_user.configurations.to_json
       end
 
       post '/configurations' do
       end
 
+      get '/configurations/:id' do |id|
+        current_user.configurations.find(id).to_json
+      end
+
       put '/configurations/:id' do |id|
-        params.inspect
       end
 
       delete '/configurations/:id' do |id|
       end
 
+    end
+
+    def current_user
+      return nil unless @userName
+      @current_user ||= User.find_or_create_by(name: @userName)
     end
 
     private

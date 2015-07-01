@@ -16,6 +16,8 @@ module OnlineKitchen
 
     register Sinatra::Namespace
     set :bind, OnlineKitchen.config.bind
+    set :protection, :origin_whitelist => OnlineKitchen.config.allowed_origin
+
     use Rack::PostBodyContentTypeParser
 
     before { auth }
@@ -25,6 +27,15 @@ module OnlineKitchen
     end
 
     namespace OnlineKitchen.config.base_url do
+      options "*" do
+        response.headers["Allow"] = "HEAD,GET,PUT,DELETE,OPTIONS"
+
+        # Needed for AngularJS
+        response.headers["Access-Control-Allow-Headers"] = "X-Requested-With, X-HTTP-Method-Override, Content-Type, Cache-Control, Accept, userName, authenticationToken"
+
+        halt HTTP_STATUS_OK
+      end
+
       get '/templates' do
         OnlineKitchenTemplate.all.as_json
       end

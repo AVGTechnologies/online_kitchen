@@ -8,6 +8,7 @@ default: &defaults
   graphite:
     host: eelk-graphite-dev-idc-prg001.mgm.avg.com
     port: 2003
+    options: {}
   soap_config:
     options: {}
     service_config:

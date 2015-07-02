@@ -65,7 +65,7 @@ class Configuration < ActiveRecord::Base
           raise 'TODO: cannot update attributes' #TODO
         end
       else
-        raise "TODO", #TODO
+        raise "TODO" #TODO
       end
     end
   end

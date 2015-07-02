@@ -39,7 +39,7 @@ module OnlineKitchen
       if config.sentry_dsn && env == 'production'
         ::Raven.configure do |config|
           config.dsn = OnlineKitchen.config.sentry_dsn
-          config.excluded_exceptions = %w{Siatra::NotFound}
+          config.excluded_exceptions = %w{Sinatra::NotFound}
         end
       end
 

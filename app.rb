@@ -20,6 +20,7 @@ module OnlineKitchen
     set :bind, OnlineKitchen.config.bind
     set :protection, :origin_whitelist => OnlineKitchen.config.allowed_origin
 
+    use Raven::Rack
     use Rack::PostBodyContentTypeParser
 
     before { auth }
@@ -47,6 +48,12 @@ module OnlineKitchen
       end
 
       post '/configurations' do
+        configuration = current_user.configurations.create(params[:configuration])
+        if configuration
+          halt 200, { status: :success }
+        else
+          halt 422, configuration.errors.to_json.update(status: :unprocessable_entity)
+        end
       end
 
       get '/configurations/:id' do |id|
@@ -57,6 +64,12 @@ module OnlineKitchen
       end
 
       delete '/configurations/:id' do |id|
+        configuration = current_user.configurations.find(id)
+        if configuration.schedule_destroy
+          halt 200, { status: :success }
+        else
+          halt 422, configuration.errors.to_json.update(status: :unprocessable_entity)
+        end
       end
 
     end

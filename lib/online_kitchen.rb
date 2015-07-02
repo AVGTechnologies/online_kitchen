@@ -20,12 +20,7 @@ module OnlineKitchen
     end
 
     def logger
-      logFile = "#{root}/log/#{env}.log"
-      unless @logger then
-        logFileDir = File.dirname(logFile)
-        FileUtils.mkdir_p(logFileDir) unless File.directory?(logFileDir)
-      end
-      @logger ||= Logger.new(logFile)
+      @logger ||= Logger.new("#{root}/log/#{env}.log")
     end
 
     def root
@@ -41,11 +36,14 @@ module OnlineKitchen
         Sidekiq.default_worker_options = { 'backtrace' => true }
       end
 
-      if config.sentry_dsn && env == 'production'
-        ::Raven.configure do |config|
-          config.dsn = OnlineKitchen.config.sentry_dsn
-          config.excluded_exceptions = %w{Sinatra::NotFound}
-        end
+      ::Raven.configure do |config|
+        puts OnlineKitchen.config.sentry_dsn
+        puts OnlineKitchen.config.sentry_dsn
+        puts OnlineKitchen.config.sentry_dsn
+        config.dsn = OnlineKitchen.config.sentry_dsn
+        config.environments = %w[ production ]
+        config.current_environment = OnlineKitchen.env
+        config.excluded_exceptions = %w{Siatra::NotFound}
       end
 
       Metriks::Reporter::Graphite.new(

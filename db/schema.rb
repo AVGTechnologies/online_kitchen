@@ -14,11 +14,12 @@
 ActiveRecord::Schema.define(version: 20150630142339) do
 
   create_table "configurations", force: :cascade do |t|
-    t.string   "name",        default: "", null: false
+    t.string   "name",        default: "",    null: false
     t.string   "folder_name"
     t.integer  "user_id"
-    t.datetime "created_at",               null: false
-    t.datetime "updated_at",               null: false
+    t.boolean  "deleted",     default: false, null: false
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
   end
 
   add_index "configurations", ["name"], name: "index_configurations_on_name", unique: true

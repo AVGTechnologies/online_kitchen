@@ -23,16 +23,10 @@ class Machine < ActiveRecord::Base
       message: "only allows letters, digits, underscore and dots"
     }
 
-  #validates :template,
-  #  presence: true,
-  #  length: {minimum: 3}, # TODO: Validate format cluster.name
-  #  format: {
-  #    with: /\A[A-Za-z]{1,10}\.[A-Za-z0-9_]+\z/,
-  #    message: "cluster and name separated by dot, letters only"
-  #  }
-
+  validates :template, inclusion: { in: ProviderTemplate.all }
   validates :state, inclusion: { in: %w(queued ready destroy_queued) }
-  validate :environment_has_allowed_structure
+  validate  :environment_has_allowed_structure
+
   serialize :environment, JSON
 
   strip_attributes :except => :environment
@@ -43,7 +37,14 @@ class Machine < ActiveRecord::Base
    "%d.%d" % [configuration.id, id]
   end
 
+
+  def schedule_destroy
+    OnlineKitchen::LabManagerRelease.perform_async(self.id)
+    update_attributes(state: :destroy_queued)
+  end
+
   private
+
     def environment_has_allowed_structure
       return if self.environment.nil?
 

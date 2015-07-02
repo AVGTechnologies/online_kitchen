@@ -7,6 +7,7 @@
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
+require 'active_support'
 
 class Configuration < ActiveRecord::Base
   has_many :machines, dependent: :destroy, inverse_of: :configuration
@@ -60,7 +61,7 @@ class Configuration < ActiveRecord::Base
         #new machine
       elsif existing_record = machines.detect { |record| record.id.to_s == attributes['id'].to_s }
         #update machine
-        if attributes['_destroy']
+        if ActiveRecord::Type::Boolean.new.type_cast_from_user(attributes['_destroy'])
         else
           raise 'TODO: cannot update attributes' #TODO
         end

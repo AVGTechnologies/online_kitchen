@@ -20,7 +20,12 @@ module OnlineKitchen
     end
 
     def logger
-      @logger ||= Logger.new("#{root}/log/#{env}.log")
+      logFile = "#{root}/log/#{env}.log"
+      unless @logger then
+        logFileDir = File.dirname(logFile)
+        FileUtils.mkdir_p(logFileDir) unless File.directory?(logFileDir)
+      end
+      @logger ||= Logger.new(logFile)
     end
 
     def root

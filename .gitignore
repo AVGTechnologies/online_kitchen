@@ -1,4 +1,5 @@
 /config/database.yml
+/config/templates.yml
 /config/online_kitchen.yml
 /.vagrant
 /db/db_development.sqlite3

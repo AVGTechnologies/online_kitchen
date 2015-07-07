@@ -17,6 +17,10 @@ class Configuration < ActiveRecord::Base
 
   strip_attributes
 
+  accepts_nested_attributes_for :machines, allow_destroy: true
+
+
+
   def as_json(options = {})
     #TODO: set only proper attributes
     #see http://jonathanjulian.com/2010/04/rails-to_json-or-as_json/
@@ -37,44 +41,25 @@ class Configuration < ActiveRecord::Base
   end
 
   def destroy
-    destroyable? ? super : self
+    return super if destroyable?
+    self
   end
 
   def schedule_destroy
+    return self.destroy if machines.all?(&:deleted?)
+
     nested_result = machines.
-      where('machines.state <> ?', :destroy_queued).
+      reject(&:deleted_or_destroy_queued?).
       map(&:schedule_destroy).
       any?
 
-    nested_result ?  update_attributes(deleted: true) : false
-  end
-
-
-  def machine_attributes
-    machines.to_json
-  end
-
-
-  def machine_attributes=(attributes_collection)
-    attributes_collection.each do |attributes|
-      if attributes['id'].blank?
-        #new machine
-      elsif existing_record = machines.detect { |record| record.id.to_s == attributes['id'].to_s }
-        #update machine
-        if ActiveRecord::Type::Boolean.new.type_cast_from_user(attributes['_destroy'])
-        else
-          raise 'TODO: cannot update attributes' #TODO
-        end
-      else
-        raise "TODO" #TODO
-      end
-    end
+    nested_result ?  update_attributes(deleted: true) : true
   end
 
   private
 
     def destroyable?
-      return true if machines.count == 0
+      return true if machines.all?(&:deleted?)
       errors.add(:base, "Cannot delete configuration with living machines")
       false
     end

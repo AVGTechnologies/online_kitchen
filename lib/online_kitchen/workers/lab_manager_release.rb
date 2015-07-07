@@ -7,9 +7,15 @@ class OnlineKitchen::LabManagerRelease
 
   def perform(machine_id)
     OnlineKitchen.logger.info "Releasing machine id:#{machine_id}"
+    machine = Machine.find(machine_id)
+    if machine.provider_id.blank?
+      OnlineKitchen.logger.warn("Cannot release machine: #{machine_id} - provider_id is empty")
+      return
+    end
     time = Benchmark.realtime do
-      machine = Machine.find(machine_id)
       vm = OnlineKitchen::LabManager.destroy(machine.provider_id)
+      machine.update_attributes(state: :deleted)
+      machine.state = :deleted
       machine.destroy!
     end
     OnlineKitchen.logger.info "Machine id:#{machine_id} destroyed in #{time.round(2)} seconds."

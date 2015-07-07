@@ -47,28 +47,34 @@ module OnlineKitchen
         current_user.configurations.to_json
       end
 
-      post '/configurations' do
-        configuration = current_user.configurations.create(params[:configuration])
-        if configuration
-          halt 200, { status: :success }
-        else
-          halt 422, configuration.errors.to_json.update(status: :unprocessable_entity)
-        end
-      end
-
       get '/configurations/:id' do |id|
         current_user.configurations.find(id).to_json
       end
 
+      post '/configurations' do
+        configuration = current_user.configurations.new(params[:configuration])
+        if configuration.save
+          halt 200, { status: :success, configuration: configuration }.to_json
+        else
+          halt 422, configuration.errors.to_h.update(status: :unprocessable_entity).to_json
+        end
+      end
+
       put '/configurations/:id' do |id|
+        configuration = current_user.configurations.find(id)
+        if configuration.update_attributes(params[:configuration])
+          halt 200, { status: :success, configuration: configuration }.to_json
+        else
+          halt 422, configuration.errors.to_h.update(status: :unprocessable_entity).to_json
+        end
       end
 
       delete '/configurations/:id' do |id|
         configuration = current_user.configurations.find(id)
         if configuration.schedule_destroy
-          halt 200, { status: :success }
+          halt 200, { status: :success, configuration: configuration }.to_json
         else
-          halt 422, configuration.errors.to_json.update(status: :unprocessable_entity)
+          halt 422, configuration.errors.to_h.update(status: :unprocessable_entity).to_json
         end
       end
 

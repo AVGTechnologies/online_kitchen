@@ -37,9 +37,6 @@ module OnlineKitchen
       end
 
       ::Raven.configure do |config|
-        puts OnlineKitchen.config.sentry_dsn
-        puts OnlineKitchen.config.sentry_dsn
-        puts OnlineKitchen.config.sentry_dsn
         config.dsn = OnlineKitchen.config.sentry_dsn
         config.environments = %w[ production ]
         config.current_environment = OnlineKitchen.env

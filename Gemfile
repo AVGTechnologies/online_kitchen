@@ -8,8 +8,6 @@ gem 'sidekiq'
 gem 'sentry-raven'#,    github: 'getsentry/raven-ruby'
 gem 'metriks'
 
-gem 'rspec'
-
 gem 'nokogiri', '~> 1.6.6'
 gem 'savon', '~> 2.11'
 
@@ -25,3 +23,12 @@ gem 'sinatra-contrib', '~> 1.4.4'
 gem "activesupport"
 
 gem "settingslogic", '~> 2.0.9'
+
+gem 'unicorn'
+
+group :test do
+  gem 'rspec'
+  gem 'factory_girl'
+  gem 'database_cleaner'
+end
+

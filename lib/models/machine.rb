@@ -24,8 +24,10 @@ class Machine < ActiveRecord::Base
     }
 
   validates :template, inclusion: { in: ProviderTemplate.all }
-  validates :state, inclusion: { in: %w(queued ready destroy_queued) }
+  validates :state, inclusion: { in: %w(queued ready destroy_queued deleted) }
   validate  :environment_has_allowed_structure
+
+  after_create :schedule_provision_vm
 
   serialize :environment, JSON
 
@@ -37,13 +39,48 @@ class Machine < ActiveRecord::Base
    "%d.%d" % [configuration.id, id]
   end
 
+  def deleted?
+    state == 'deleted'
+  end
+
+  def destroy_queued?
+    state == 'destroy_queued'
+  end
+
+  def deleted_or_destroy_queued?
+    deleted? or destroy_queued?
+  end
+
+  def destroy
+    if deleted?
+      #VM is not running therefore I can delete AR object
+      OnlineKitchen.logger.info "Destroying machine: #{self.id}"
+      super
+    elsif state == 'destroy_queued'
+      OnlineKitchen.logger.info "Machine: #{self.id} is already scheduled to destroy."
+    else
+      OnlineKitchen.logger.info "Scheduling releasing for machine: #{self.id}"
+      OnlineKitchen::LabManagerRelease.perform_async(self.id)
+      self.state = 'destroy_queued'
+      self.save
+      run_callbacks :destroy
+      freeze
+    end
+  end
+
 
   def schedule_destroy
+    OnlineKitchen.logger.info "Scheduling releasing for machine: #{self.id}"
     OnlineKitchen::LabManagerRelease.perform_async(self.id)
     update_attributes(state: :destroy_queued)
   end
 
   private
+
+    def schedule_provision_vm
+      OnlineKitchen.logger.info "Scheduling provision for machine: #{self.id}"
+      OnlineKitchen::LabManagerProvision.perform_async(self.id)
+    end
 
     def environment_has_allowed_structure
       return if self.environment.nil?

@@ -8,7 +8,7 @@ Setup
 
       cp config/database.yml.example config/database.yml
       cp config/online_kitchen.yml.example config/online_kitchen.yml
-      cp config/templates.yml config/templates.yml
+      cp config/templates.yml.example config/templates.yml
 
  2. install all dependant libraries and init db:
 
@@ -31,4 +31,10 @@ Example of curl with proper params:
        -H "Content-Type: application/json" \
        -d '{ "nic": "neco" }' \
        http://localhost:4567/api/v1/configurations/123
+
+FAQ
+---
+1. If you have problem with downloading vagrant box
+
+     vagrant box add --insecure 'ubuntu/trusty64' https://atlas.hashicorp.com/ubuntu/boxes/trusty64/versions/14.04/providers/virtualbox.box
 

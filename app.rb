@@ -40,7 +40,7 @@ module OnlineKitchen
       end
 
       get '/templates' do
-        OnlineKitchenTemplate.all.to_json
+        ProviderTemplate.all.to_json
       end
 
       get '/configurations' do

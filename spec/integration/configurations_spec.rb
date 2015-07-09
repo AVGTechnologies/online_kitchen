@@ -21,6 +21,12 @@ describe 'Configurations' do
     template: ProviderTemplate.first
   } }
 
+  it 'GET /templates returs all templates' do
+    response = get "/api/v1/templates", {}, headers
+    payload = JSON.parse(response.body)
+    expect(payload.size).to eq ProviderTemplate.all.size
+  end
+
   context 'GET /configurations' do
     context 'when user does not extsts' do
       it 'creates the user' do

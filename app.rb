@@ -19,6 +19,7 @@ module OnlineKitchen
     register Sinatra::Namespace
     set :bind, OnlineKitchen.config.bind
     set :protection, :origin_whitelist => OnlineKitchen.config.allowed_origin
+    set :show_exceptions, false
 
     use Raven::Rack
     use Rack::PostBodyContentTypeParser
@@ -56,7 +57,7 @@ module OnlineKitchen
         if configuration.save
           halt 200, { status: :success, configuration: configuration }.to_json
         else
-          halt 422, configuration.errors.to_h.update(status: :unprocessable_entity).to_json
+          halt 422, { status: :unprocessable_entity, errors: configuration.errors.to_h }.to_json
         end
       end
 
@@ -65,19 +66,47 @@ module OnlineKitchen
         if configuration.update_attributes(params[:configuration])
           halt 200, { status: :success, configuration: configuration }.to_json
         else
-          halt 422, configuration.errors.to_h.update(status: :unprocessable_entity).to_json
+          halt 422, { status: :unprocessable_entity, errors: configuration.errors.to_h }.to_json
         end
       end
 
       delete '/configurations/:id' do |id|
         configuration = current_user.configurations.find(id)
         if configuration.schedule_destroy
+          configuration = nil if configuration.destroyed?
           halt 200, { status: :success, configuration: configuration }.to_json
         else
-          halt 422, configuration.errors.to_h.update(status: :unprocessable_entity).to_json
+          halt 422, { status: :unprocessable_entity, errors: configuration.errors.to_h }.to_json
         end
       end
 
+    end
+
+    error ActiveRecord::RecordNotFound do
+      halt 404, { message: "Not found" }.to_json
+    end
+
+    error ActiveRecord::RecordInvalid do
+      errors = env['sinatra.error'].record.errors.to_h
+      halt 422, {
+        message: 'Validation fails',
+        errors: errors.to_h
+      }.to_json
+    end
+
+    error ActiveRecord::UnknownAttributeError do
+      record = env['sinatra.error'].record
+      errors = record.errors.to_h
+      halt 422, {
+        message: record.valid? ? 'Validation fails' : env['sinatra.error'].to_s,
+        errors: errors.to_h
+      }.to_json
+    end
+
+
+    #FIXME: does not work
+    error JSON::ParserError do
+      halt 400, { message: "Cannot parse JSON" }.to_json
     end
 
     def current_user

@@ -57,6 +57,33 @@ describe 'Configurations' do
     end
   end
 
+  context 'GET /configuration/:id' do
+    context 'when configuration ID does not exists' do
+      it 'response 404 status code' do
+        response = get "/api/v1/configurations/12345", {}, headers
+        expect(response.status).to eq 404
+      end
+    end
+
+    context 'when configuration exists' do
+      let!(:configuration) {
+        configuration = FactoryGirl.create(:configuratin_with_machines, user: user)
+      }
+      it 'returns configuration attributes with machines' do
+        response = get "/api/v1/configurations/#{configuration.id}", {}, headers
+        expect(response.status).to eq 200
+
+        result = JSON.parse(response.body)
+        expect(result).to include({
+          "user_id"   => user.id,
+          "name"      => configuration.name,
+          "folder_name"  => configuration.folder_name
+        })
+        expect(result['machines'].size).to eq 3
+      end
+    end
+  end
+
   context 'PUT /configuration/:id' do
     let!(:configuration) {
       configuration = FactoryGirl.create(:configuratin_with_machines, user: user)

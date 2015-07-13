@@ -15,22 +15,88 @@ Setup
       bundle install
       rake db:setup
 
-Run background jobs
--------------------
+  3. Follow Procfile (in production)
 
-     sidekiq -q lab_manager -r ./bin/Asidekiq_jobs.rb
 
 Development
 -----------
 
 Example of curl with proper params:
 
-     curl -i -X PUT curl -i -H 'UserName: franta.lopata' \
+For following examples you can run server in devel by `rackup`.
+
+* Get list of Configuration (for user franta.lopata):
+
+     curl -i -H 'UserName: franta.lopata' \
+       -H 'AUTHENTICATIONTOKEN: secret' -H "Accept: application/json" \
+       -H  "Content-Type: application/json" \
+       http://localhost:9292/api/v1/configurations
+
+* Create new configuration:
+
+     curl -i -X POST -H 'UserName: franta.lopata' \
+       -H 'AUTHENTICATIONTOKEN: secret' -H "Accept: application/json" \
+       -H "Content-Type: application/json" \
+       -d '{ "configuration": {"name": "configurationName", "folder_name": "_online_kitnech_test"}}'
+       http://localhost:9292/api/v1/configurations
+
+* Update Configuration:
+
+ * add machine:
+
+     curl -i -X PUT -H 'UserName: franta.lopata' \
        -H 'AUTHENTICATIONTOKEN: secret' \
        -H "Accept: application/json" \
        -H "Content-Type: application/json" \
-       -d '{ "nic": "neco" }' \
-       http://localhost:4567/api/v1/configurations/123
+       -d '{ "configuration": { "machines_attributes": [{ "name": "MachineName1", "template": "travis_7x86"}] }}' \
+       http://localhost:9292/api/v1/configurations/44
+
+ * destroy machine (switch machine to `destroy_queued` state and schedule destroying):
+
+     curl -i -X PUT -H 'UserName: franta.lopata' \
+       -H 'AUTHENTICATIONTOKEN: secret' \
+       -H "Accept: application/json" \
+       -H "Content-Type: application/json" \
+       -d '{ "configuration": { "machines_attributes": [{ "id": 22, "_destroy": "1"}] }}' \
+       http://localhost:9292/api/v1/configurations/44
+
+
+* Destroy configuration (e.g. schedule destroy)
+
+     curl -i -X DELETE -H 'UserName: franta.lopata' \
+       -H 'AUTHENTICATIONTOKEN: secret' \
+       -H "Accept: application/json" \
+       -H "Content-Type: application/json" \
+       http://localhost:4567/api/v1/configurations/1
+
+
+Error Handling
+--------------
+
+Service raises following exceptions:
+* 400 JSON::ParserError (not implemented yet)
+* 404 Record not Found
+* 422 InvalidRecord and/or Validation Error
+* 500 Application error - this means error in code
+
+Example of validation error response:
+
+     {
+       "status": "unprocessable_entity",
+       "errors": {
+         "name": "is too short (minimum is 3 characters)"
+       }
+     }
+
+Setup IRB
+---------
+
+     rails
+     > OnlineKitchen.setup
+     > # for FactoryGirl
+     > require 'factory_girl'
+     > require './spec/factories'
+
 
 FAQ
 ---

@@ -213,6 +213,3 @@ DEPENDENCIES
   sqlite3
   strip_attributes (~> 1.7.0)
   unicorn
-
-BUNDLED WITH
-   1.10.5

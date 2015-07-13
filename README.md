@@ -6,14 +6,14 @@ Setup
 
  1. copy and setup config files:
 
-      cp config/database.yml.example config/database.yml
-      cp config/online_kitchen.yml.example config/online_kitchen.yml
-      cp config/templates.yml.example config/templates.yml
+      cp config/database.yml.example config/database.yml  
+      cp config/online_kitchen.yml.example config/online_kitchen.yml  
+      cp config/templates.yml.example config/templates.yml  
 
  2. install all dependant libraries and init db:
 
-      bundle install
-      rake db:setup
+      bundle install  
+      rake db:setup  
 
   3. Follow Procfile (in production)
 

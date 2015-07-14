@@ -46,7 +46,7 @@ describe 'Configurations' do
 
     context 'when configurations exists' do
       let!(:configuration) {
-        configuration = FactoryGirl.create(:configuratin_with_machines, user: user)
+        configuration = FactoryGirl.create(:configuration_with_machines, user: user)
       }
       it 'returns JSON representations' do
         response = get "/api/v1/configurations", {}, headers
@@ -67,7 +67,7 @@ describe 'Configurations' do
 
     context 'when configuration exists' do
       let!(:configuration) {
-        configuration = FactoryGirl.create(:configuratin_with_machines, user: user)
+        configuration = FactoryGirl.create(:configuration_with_machines, user: user)
       }
       it 'returns configuration attributes with machines' do
         response = get "/api/v1/configurations/#{configuration.id}", {}, headers
@@ -86,7 +86,7 @@ describe 'Configurations' do
 
   context 'PUT /configuration/:id' do
     let!(:configuration) {
-      configuration = FactoryGirl.create(:configuratin_with_machines, user: user)
+      configuration = FactoryGirl.create(:configuration_with_machines, user: user)
     }
 
     it 'schedule release VMs for deteted ones' do
@@ -157,7 +157,7 @@ describe 'Configurations' do
   context 'DELETE /configuration/:id' do
     context 'when VM is running' do
       let!(:configuration) {
-        configuration = FactoryGirl.create(:configuratin_with_machines, user: user)
+        configuration = FactoryGirl.create(:configuration_with_machines, user: user)
       }
       it 'schedule release of VM' do
         expect {
@@ -174,7 +174,7 @@ describe 'Configurations' do
 
     context 'when all VMs are already deleted' do
       let!(:configuration) {
-        configuration = FactoryGirl.create(:configuratin_with_machines, user: user)
+        configuration = FactoryGirl.create(:configuration_with_machines, user: user)
       }
       it 'destroy a configuration' do
         configuration.machines.each { |machine| machine.state = 'deleted' }
@@ -189,4 +189,3 @@ describe 'Configurations' do
     end
   end
 end
-

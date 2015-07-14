@@ -19,8 +19,6 @@ class Configuration < ActiveRecord::Base
 
   accepts_nested_attributes_for :machines, allow_destroy: true
 
-
-
   def as_json(options = {})
     #TODO: set only proper attributes
     #see http://jonathanjulian.com/2010/04/rails-to_json-or-as_json/

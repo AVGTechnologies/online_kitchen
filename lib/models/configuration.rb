@@ -53,7 +53,7 @@ class Configuration < ActiveRecord::Base
       map(&:schedule_destroy).
       any?
 
-    nested_result ?  update_attributes(deleted: true) : true
+    nested_result ? update_attributes(deleted: true) : true
   end
 
   private

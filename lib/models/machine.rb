@@ -68,7 +68,6 @@ class Machine < ActiveRecord::Base
     end
   end
 
-
   def schedule_destroy
     OnlineKitchen.logger.info "Scheduling releasing for machine: #{self.id}"
     OnlineKitchen::LabManagerRelease.perform_async(self.id)

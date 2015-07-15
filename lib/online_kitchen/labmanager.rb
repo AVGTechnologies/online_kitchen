@@ -23,7 +23,6 @@
 require 'securerandom'
 require 'active_support/core_ext/object/blank'
 
-
 module OnlineKitchen
   class LabManager
 
@@ -111,8 +110,5 @@ module OnlineKitchen
           }
         end
       end
-
-
-
   end
 end

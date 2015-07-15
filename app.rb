@@ -24,7 +24,6 @@ module OnlineKitchen
     use Raven::Rack
     use Rack::PostBodyContentTypeParser
 
-    before { auth }
     before do
       content_type 'application/json'
       response['Access-Control-Allow-Origin'] = OnlineKitchen.config.allowed_origin
@@ -37,22 +36,26 @@ module OnlineKitchen
         # Needed for AngularJS
         response.headers["Access-Control-Allow-Headers"] = "X-Requested-With, X-HTTP-Method-Override, Content-Type, Cache-Control, Accept, userName, authenticationToken"
 
-        halt HTTP_STATUS_OK
+        halt 200
       end
 
       get '/templates' do
+        auth
         ProviderTemplate.all.to_json
       end
 
       get '/configurations' do
+        auth
         current_user.configurations.to_json
       end
 
       get '/configurations/:id' do |id|
+        auth
         current_user.configurations.find(id).to_json
       end
 
       post '/configurations' do
+        auth
         configuration = current_user.configurations.new(params[:configuration])
         if configuration.save
           halt 200, { status: :success, configuration: configuration }.to_json
@@ -62,6 +65,7 @@ module OnlineKitchen
       end
 
       put '/configurations/:id' do |id|
+        auth
         configuration = current_user.configurations.find(id)
         if configuration.update_attributes(params[:configuration])
           halt 200, { status: :success, configuration: configuration }.to_json
@@ -71,6 +75,7 @@ module OnlineKitchen
       end
 
       delete '/configurations/:id' do |id|
+        auth
         configuration = current_user.configurations.find(id)
         if configuration.schedule_destroy
           configuration = nil if configuration.destroyed?

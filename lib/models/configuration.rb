@@ -22,7 +22,9 @@ class Configuration < ActiveRecord::Base
   def as_json(options = {})
     #TODO: set only proper attributes
     #see http://jonathanjulian.com/2010/04/rails-to_json-or-as_json/
-    super(:include => [:machines])
+    @result = super(:include => [:machines])
+    @result["machines_attributes"] = @result.delete("machines")
+    @result
   end
 
   def state

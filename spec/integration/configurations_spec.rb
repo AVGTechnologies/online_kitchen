@@ -79,7 +79,7 @@ describe 'Configurations' do
           "name"      => configuration.name,
           "folder_name"  => configuration.folder_name
         })
-        expect(result['machines'].size).to eq 3
+        expect(result['machines_attributes'].size).to eq 3
       end
     end
   end
@@ -89,13 +89,13 @@ describe 'Configurations' do
       configuration = FactoryGirl.create(:configuration_with_machines, user: user)
     }
 
-    it 'schedule release VMs for deteted ones' do
+    it 'schedule release VMs for deleted ones' do
 
-      second_machnine = configuration.machines[0]
+      second_machine = configuration.machines[0]
       payload = {
         configuration: {
           machines_attributes: [
-            { id: second_machnine.id, _destroy: '1' },
+            { id: second_machine.id, _destroy: '1' },
             { id: configuration.machines[0].id } #this one should not be scheduled
           ]
         }
@@ -106,7 +106,7 @@ describe 'Configurations' do
         expect(response.status).to eq 200
 
         result = JSON.parse(response.body)
-        machine_states = result['configuration']['machines'].map { |m| m['state'] }.sort
+        machine_states = result['configuration']['machines_attributes'].map { |m| m['state'] }.sort
         expect(machine_states).to eq ["destroy_queued", "queued", "queued"]
 
       }.to change { OnlineKitchen::LabManagerRelease.jobs.size }.by(1)
@@ -147,7 +147,7 @@ describe 'Configurations' do
         response = post "/api/v1/configurations", payload, headers
         expect(response.status).to eq 200
         result = JSON.parse(response.body)
-        machine_states = result['configuration']['machines'].map { |m| m['state'] }
+        machine_states = result['configuration']['machines_attributes'].map { |m| m['state'] }
         expect(machine_states).to eq ['queued', 'queued']
       }.to change { OnlineKitchen::LabManagerProvision.jobs.size }.by(2)
 
@@ -164,7 +164,7 @@ describe 'Configurations' do
           response = delete "/api/v1/configurations/#{configuration.id}", {}, headers
           expect(response.status).to eq 200
           result = JSON.parse(response.body)
-          machine_states = result['configuration']['machines'].map { |m| m['state'] }
+          machine_states = result['configuration']['machines_attributes'].map { |m| m['state'] }
           expect(machine_states).to eq ["destroy_queued", "destroy_queued", "destroy_queued"]
         }.to change { OnlineKitchen::LabManagerRelease.jobs.size }.by(3)
         configuration.reload

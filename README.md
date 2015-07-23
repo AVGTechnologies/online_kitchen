@@ -1,6 +1,11 @@
 Online Kitchen
 ==============
 
+Prerequisites
+-------------
+* Vagrant installed (https://www.vagrantup.com/) and added to PATH
+* Path to SSH added to PATH
+
 Setup
 -----
 
@@ -15,13 +20,20 @@ Setup
      bundle install
      rake db:setup
 
-  3. Follow Procfile (in production)
+  3. in root of the repository
+
+     vagrant box add --insecure 'ubuntu/trusty64' https://atlas.hashicorp.com/ubuntu/boxes/trusty64/versions/14.04/providers/virtualbox.box
+     vagrant up
+     vagrant ssh
+     cd /vagrant
+
+  4. Follow Procfile (in production)
 
 
 Development
 -----------
 
-Example of curl with proper params to be used in Linux terminal 
+Example of curl with proper params to be used in Linux terminal
 (Windows terminal does not allow the '' and you need to use double quotes
 everywhere + escape the quotes... inside quotes with triple quotes.
 For windows users - install Cygwin (mintty.exe) or install MSYS
@@ -112,4 +124,3 @@ FAQ
 
      require 'sidekiq/api'
      Sidekiq::Queue.new.clear
-

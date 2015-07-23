@@ -12,9 +12,10 @@ Set up production machine
      curl -sSL https://rvm.io/mpapis.asc | gpg --import -
      curl -sSL https://get.rvm.io | bash -s stable --ruby
      source /home/vagrant/.rvm/scripts/rvm
-     gem install bundler
-
+     sudo gem install bundler
 
      sudo apt-get install libpq-dev
      sudo apt-get install sqlite3
      sudo apt-get install redis-server
+
+     bundle install

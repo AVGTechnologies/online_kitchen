@@ -110,19 +110,25 @@ module OnlineKitchen
     end
 
     def current_user
-      return nil unless @userName
-      @current_user ||= User.find_or_create_by(name: @userName)
+      return nil unless @user_name
+      @current_user ||= User.find_or_create_by(name: @user_name)
     end
 
     private
 
     def authenticate_user
-      @userName = env['HTTP_USERNAME']
-      @authenticationToken = env['HTTP_AUTHENTICATIONTOKEN']
-
-      if @userName.blank? or @authenticationToken.blank?
+      @user_name = get_header_value("UserName")
+      @authentication_token = get_header_value("AuthenticationToken")
+      if @user_name.blank? or @authentication_token.blank?
         halt 401, {:result => 'error', :message => "Invalid user credentials"}.to_json
       end
+    end
+
+    def get_header_value(name)
+      name.upcase!
+      variable = "HTTP_#{name}"
+      value = env[variable]
+      value.downcase != "null" ? value : nil
     end
 
     run! if app_file == $0 # This makes the app launchanble like "ruby app.rb"

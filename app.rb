@@ -32,7 +32,7 @@ module OnlineKitchen
 
     namespace OnlineKitchen.config.base_url do
       options "*" do
-        response.headers["Allow"] = "HEAD, GET, PUT, POST, DELETE, OPTIONS"
+        response.headers["Access-Control-Allow-Methods"] = "HEAD, GET, PUT, POST, DELETE, OPTIONS"
 
         # Needed for AngularJS
         response.headers["Access-Control-Allow-Headers"] = "X-Requested-With, X-HTTP-Method-Override, Content-Type, Cache-Control, Accept, userName, authenticationToken"

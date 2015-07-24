@@ -128,6 +128,8 @@ module OnlineKitchen
       name.upcase!
       variable = "HTTP_#{name}"
       value = env[variable]
+
+      return nil if value == nil
       value.downcase != "null" ? value : nil
     end
 

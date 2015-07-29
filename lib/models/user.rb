@@ -6,7 +6,7 @@ class User < ActiveRecord::Base
     length: {minimum: 5},
     uniqueness: { scope: :id },
     format: {
-      with: /\A[A-Za-z0-9_\.\\]+\z/,
+      with: /\A[[[:alnum:]]._\\]+\z/,
       message: "allows letters, dots, underscores and numbers"
     }
 

@@ -62,8 +62,14 @@ module OnlineKitchen
 
     end
 
+    def initialize
+      @vm = {}
+    end
+
     def destroy
-      self.class.release_machine(vm[:name]) if vm
+      self.class.release_machine(vm[:name]) if vm and vm[:name]
+      @vm = {}
+      self
     end
 
     def ip

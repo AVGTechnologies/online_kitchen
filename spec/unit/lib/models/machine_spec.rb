@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'sidekiq/testing'
 
 describe 'Machine' do
   let!(:machine) { Machine.new }

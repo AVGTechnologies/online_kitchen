@@ -28,7 +28,7 @@ class Configuration < ActiveRecord::Base
   end
 
   def state
-    states = machines.pluck(:state).uniq
+    states = machines.map { |x| x.state }.uniq
 
     case states
       when ['ready']

@@ -28,4 +28,13 @@ describe 'Machine' do
     subject.schedule_destroy
     expect(machine.destroy_queued?).to be true
   end
+
+  context 'when state is ready' do
+    let(:machine) { FactoryGirl.build(:machine, state: 'ready', provider_id: nil);  }
+
+    it 'validates provider_id presence' do
+      expect(machine.valid?).to be false
+      expect(machine.errors).to have_key(:provider_id)
+    end
+  end
 end

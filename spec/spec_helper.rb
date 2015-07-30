@@ -4,6 +4,7 @@ require 'rspec'
 require 'factory_girl'
 require 'factories'
 require 'database_cleaner'
+require 'sidekiq/testing'
 require File.expand_path('../../app.rb', __FILE__)
 require File.expand_path('../../lib/online_kitchen/labmanager.rb', __FILE__)
 

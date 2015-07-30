@@ -25,6 +25,7 @@ class Machine < ActiveRecord::Base
 
   validates :template, inclusion: { in: ProviderTemplate.all }
   validates :state, inclusion: { in: %w(queued ready destroy_queued deleted) }
+  validates :provider_id, presence: true, if:  ->(s) { s.state == 'ready' }
   validate  :environment_has_allowed_structure
 
   after_create :schedule_provision_vm

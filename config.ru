@@ -4,7 +4,7 @@ require 'bundler/setup'
 require File.expand_path('../app', __FILE__)
 
 
-OnlineKitchen::App.run!
+run OnlineKitchen::App
 
 # following conde does not set bind properly:
 # (see http://stackoverflow.com/a/27900704/1045752)

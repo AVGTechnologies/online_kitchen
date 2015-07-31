@@ -109,6 +109,7 @@ describe 'Configurations' do
         let!(:configuration) {
           configuration = FactoryGirl.create(:configuration_with_machines, user: user)
         }
+
         it 'returns configuration attributes with machines' do
           response = get "/api/v1/configurations/#{configuration.id}", {}, headers
           expect(response.status).to eq 200
@@ -121,6 +122,15 @@ describe 'Configurations' do
           })
           expect(result['machines_attributes'].size).to eq 3
         end
+
+        it 'returns template in machines attributes' do
+          response = get "/api/v1/configurations/#{configuration.id}", {}, headers
+
+          result = JSON.parse(response.body)
+
+          expect(result['machines_attributes'][0]).to have_key('template')
+        end
+
       end
     end
 

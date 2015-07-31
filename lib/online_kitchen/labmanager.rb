@@ -109,7 +109,7 @@ module OnlineKitchen
         Nokogiri::XML::Builder.new do |xml|
           xml.xml {
             xml.folder opts[:vms_folder]
-            xml.templateName opts[:template_name]
+            xml.templateName opts[:image]
             xml.guid opts[:uuid] || SecureRandom.uuid
             xml.requestorUserName (opts[:requestor])
             xml.testId opts[:job_id]

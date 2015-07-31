@@ -4,7 +4,8 @@
 #
 #  id                  :integer          not null, primary key
 #  name                :string
-#  template            :string
+#  cluster             :string
+#  image               :string
 #  environment         :text
 #  configuration_id_id :integer
 #  created_at          :datetime         not null
@@ -23,10 +24,10 @@ class Machine < ActiveRecord::Base
       message: "only allows letters, digits, underscore and dots"
     }
 
-  validates :template, inclusion: { in: ProviderTemplate.all }
   validates :state, inclusion: { in: %w(queued ready destroy_queued deleted) }
   validates :provider_id, presence: true, if:  ->(s) { s.state == 'ready' }
   validate  :environment_has_allowed_structure
+  validate  :image_is_valid
 
   after_create :schedule_provision_vm
 
@@ -35,6 +36,23 @@ class Machine < ActiveRecord::Base
   strip_attributes :except => :environment
 
   delegate :user, :folder_name, to: :configuration
+
+
+  def as_json(options = {})
+    h = super(options)
+    h['template'] = template
+    h
+  end
+
+  def template
+    "%s.%s" % [cluster, image]
+  end
+
+  def template=(value)
+    parsed_cluster, parsed_image = value.split('.', 2)
+    self.cluster = parsed_cluster
+    self.image = parsed_image
+  end
 
   def job_id
    "%d.%d" % [configuration.id, id]
@@ -101,5 +119,11 @@ class Machine < ActiveRecord::Base
         end
       end
       true
+    end
+
+    def image_is_valid
+      unless ProviderTemplate.include_image?(image)
+        errors.add(:image, "passed image is not supported")
+      end
     end
 end

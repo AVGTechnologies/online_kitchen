@@ -29,6 +29,25 @@ describe 'Machine' do
     expect(machine.destroy_queued?).to be true
   end
 
+  it "converts template with cluster to cluster and image" do
+    machine.template = "alvin.TA_7x64"
+
+    expect(machine.cluster).to eq("alvin")
+    expect(machine.image).to eq("TA_7x64")
+  end
+
+  it "allows to write and read template" do
+    machine.template = "alvin.TA_7x64"
+
+    expect(machine.template).to eq("alvin.TA_7x64")
+    expect(machine.cluster).to eq("alvin")
+    expect(machine.image).to eq("TA_7x64")
+  end
+
+  it "contains template field when represented as json" do
+    expect(machine.as_json).to have_key('template')
+  end
+
   context 'when state is ready' do
     let(:machine) { FactoryGirl.build(:machine, state: 'ready', provider_id: nil);  }
 

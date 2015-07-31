@@ -19,4 +19,12 @@ describe 'ProviderTemplate' do
     expect(ProviderTemplate.all.length).to be > 0
   end
 
+  it "allows testing for image presence" do
+    expect_any_instance_of(ProviderTemplate).to(
+      receive(:templates).and_return(['my_cluster.my_image'])
+    )
+
+    expect(ProviderTemplate.include_image?('my_image')).to be true
+  end
+
 end

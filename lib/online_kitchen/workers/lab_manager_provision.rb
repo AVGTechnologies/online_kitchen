@@ -38,7 +38,7 @@ class OnlineKitchen::LabManagerProvision
     def builder(machine)
       {
         vms_folder: machine.folder_name,
-        template_name: machine.template,
+        image: machine.image,
         requestor: machine.user.name,
         job_id: machine.job_id
       }

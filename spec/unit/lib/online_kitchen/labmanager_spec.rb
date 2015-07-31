@@ -12,7 +12,7 @@ describe 'LabManager' do
 
   let(:provision_specs) { {
       vms_folder: "folder_name",
-      template_name: "super_template",
+      image: "super_template",
       requestor: "my.name",
       job_id: "job_id"
   } }

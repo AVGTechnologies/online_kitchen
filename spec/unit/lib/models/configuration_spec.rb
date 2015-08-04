@@ -27,4 +27,14 @@ describe 'Configuration' do
     end
 
   end
+
+  it "validates name to contain only alphanumeric characters, dot and underscore" do
+    goodConfiguration = FactoryGirl.build(:configuration, name: "MyFolder.Is_Good42")
+    expect(goodConfiguration.valid?).to be true
+
+    badConfiguration = FactoryGirl.build(:configuration, name: "čučoriedka")
+    badConfiguration.valid?
+    expect(badConfiguration.errors).to have_key(:name)
+  end
+
 end

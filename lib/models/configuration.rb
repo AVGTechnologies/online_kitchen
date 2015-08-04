@@ -13,7 +13,14 @@ class Configuration < ActiveRecord::Base
   has_many :machines, dependent: :destroy, inverse_of: :configuration
   belongs_to :user
 
-  validates :name, presence: true, uniqueness: true, length: {minimum: 3}
+  validates :name,
+    presence: true,
+    uniqueness: true,
+    length: {minimum: 3},
+    format: {
+      with: /\A[A-Za-z0-9_.]+\z/,
+      message: "only allows letters, digits, dot and underscore"
+    }
 
   strip_attributes
 

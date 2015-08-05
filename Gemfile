@@ -24,11 +24,14 @@ gem "activesupport"
 
 gem "settingslogic", '~> 2.0.9'
 
-gem 'unicorn'
+if RUBY_PLATFORM=~ /win32|mingw32/
+   gem "thin"
+else
+   gem "unicorn"
+end
 
-group :test do
+group :test, :development do
   gem 'rspec'
   gem 'factory_girl'
   gem 'database_cleaner'
 end
-

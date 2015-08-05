@@ -29,9 +29,10 @@ class Configuration < ActiveRecord::Base
   def as_json(options = {})
     #TODO: set only proper attributes
     #see http://jonathanjulian.com/2010/04/rails-to_json-or-as_json/
-    @result = super(:include => [:machines])
-    @result["machines_attributes"] = @result.delete("machines")
-    @result
+
+    result = super(options)
+    result["machines_attributes"] = machines.as_json
+    result
   end
 
   def state
@@ -61,6 +62,10 @@ class Configuration < ActiveRecord::Base
       any?
 
     nested_result ? update_attributes(deleted: true) : true
+  end
+
+  def before_update
+    folder_name = name
   end
 
   private

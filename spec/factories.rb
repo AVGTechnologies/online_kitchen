@@ -6,7 +6,6 @@ FactoryGirl.define do
 
   factory :configuration do |f|
     f.sequence(:name)   { |n| "configuration.name#{n}" }
-    f.folder_name       "_online_kitnech_test"
     f.user              { FactoryGirl.create(:user) }
     f.factory :configuration_with_machines do
       f.machines        { build_list(:machine, 3) }

@@ -21,10 +21,13 @@ class Configuration < ActiveRecord::Base
       with: /\A[A-Za-z0-9_.]+\z/,
       message: "only allows letters, digits, dot and underscore"
     }
+  validate :folder_name_did_not_change
 
   strip_attributes
 
   accepts_nested_attributes_for :machines, allow_destroy: true
+
+  before_create :copy_name_to_config
 
   def as_json(options = {})
     #TODO: set only proper attributes
@@ -64,8 +67,8 @@ class Configuration < ActiveRecord::Base
     nested_result ? update_attributes(deleted: true) : true
   end
 
-  def before_update
-    folder_name = name
+  def copy_name_to_config
+    self.folder_name = self.name
   end
 
   private
@@ -74,5 +77,13 @@ class Configuration < ActiveRecord::Base
       return true if machines.all?(&:deleted?)
       errors.add(:base, "Cannot delete configuration with living machines")
       false
+    end
+
+    def folder_name_did_not_change
+      # note: persisted returns true in case change is
+      #       NOT caused by adding or removing record to DB
+      if folder_name_changed? && self.persisted?
+        errors.add(:folder_name, "was changed. You cannot change folder_name of already created instance.")
+      end
     end
 end

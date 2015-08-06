@@ -37,7 +37,6 @@ class Machine < ActiveRecord::Base
 
   delegate :user, :folder_name, to: :configuration
 
-
   def as_json(options = {})
     h = super(options)
     h['template'] = template
@@ -55,7 +54,7 @@ class Machine < ActiveRecord::Base
   end
 
   def job_id
-   "%d.%d" % [configuration.id, id]
+    "%d.%d" % [configuration.id, id]
   end
 
   def deleted?

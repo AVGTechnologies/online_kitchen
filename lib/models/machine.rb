@@ -78,10 +78,10 @@ class Machine < ActiveRecord::Base
       OnlineKitchen.logger.info "Machine: #{self.id} is already scheduled to destroy."
     else
       OnlineKitchen.logger.info "Scheduling releasing for machine: #{self.id}"
-      OnlineKitchen::LabManagerRelease.perform_async(self.id)
       self.state = 'destroy_queued'
       self.save
       run_callbacks :destroy
+      OnlineKitchen::LabManagerRelease.perform_async(self.id)
       freeze
     end
   end

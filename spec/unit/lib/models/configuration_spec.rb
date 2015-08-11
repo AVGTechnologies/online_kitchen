@@ -28,8 +28,8 @@ describe 'Configuration' do
 
   end
 
-  it "validates name to contain only alphanumeric characters, dot and underscore" do
-    goodConfiguration = FactoryGirl.build(:configuration, name: "MyFolder.Is_Good42")
+  it "validates name to contain only alphanumeric characters, dot, space and underscore" do
+    goodConfiguration = FactoryGirl.build(:configuration, name: "MyFolder.Is_Good 42")
     expect(goodConfiguration.valid?).to be true
 
     badConfiguration = FactoryGirl.build(:configuration, name: "čučoriedka")
@@ -50,5 +50,14 @@ describe 'Configuration' do
 
     expect(subject.folder_name).to eq(subject.name)
   end
+
+  it "does not allow name longer than 32 characters" do
+    badConfiguration = FactoryGirl.build(:configuration,
+      name: "This_Is_Indeed_A_Very_Long_Name_Whose_Usability_With_VMWare_Is_Risky")
+
+    expect(badConfiguration.valid?).to be false
+    expect(badConfiguration.errors).to have_key(:name)
+  end
+
 
 end

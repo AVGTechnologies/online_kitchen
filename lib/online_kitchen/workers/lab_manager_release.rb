@@ -9,7 +9,8 @@ class OnlineKitchen::LabManagerRelease
     OnlineKitchen.logger.info "Releasing machine id:#{machine_id}"
     machine = Machine.find(machine_id)
     if machine.provider_id.blank?
-      OnlineKitchen.logger.warn("Cannot release machine: #{machine_id} - provider_id is empty")
+      OnlineKitchen.logger.warn("Cannot release machine: #{machine_id} - provider_id is empty, reenqueueing...")
+      self.class.perform_in(OnlineKitchen.config[:reenqueue_release_time].minutes, machine_id)
       return
     end
     time = Benchmark.realtime do

@@ -18,10 +18,9 @@ class Machine < ActiveRecord::Base
   validates :name,
     presence: true,
     length: {minimum: 3},
-    uniqueness: { scope: :configuration_id },
     format: {
-      with: /\A[A-Za-z0-9_\.]+\z/,
-      message: "only allows letters, digits, underscore and dots"
+      with: /\A[A-Za-z0-9_\. ()#\-<>:\|\\\[\]\/]+\z/,
+      message: "only allows alphanumeric, brackets and some more special characters"
     }
 
   validates :state, inclusion: { in: %w(queued ready destroy_queued deleted) }
@@ -29,7 +28,7 @@ class Machine < ActiveRecord::Base
   validate  :environment_has_allowed_structure
   validate  :image_is_valid
 
-  after_create :schedule_provision_vm
+  after_commit :schedule_provision_vm, on: :create
 
   serialize :environment, JSON
 

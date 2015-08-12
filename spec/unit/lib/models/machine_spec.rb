@@ -56,4 +56,10 @@ describe 'Machine' do
       expect(machine.errors).to have_key(:provider_id)
     end
   end
+
+  it "validates name to contain only approved alphanumeric, bracket and special characters" do
+    properly_named_machine = FactoryGirl.build(:machine, name: 'Az9#()<>:|[]/\\-')
+
+    expect(properly_named_machine.valid?).to be true
+  end
 end

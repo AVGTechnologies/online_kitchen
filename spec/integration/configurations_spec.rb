@@ -162,7 +162,7 @@ describe 'Configurations' do
         }.to change { OnlineKitchen::LabManagerRelease.jobs.size }.by(1)
       end
 
-      it 'schedule provision VMs for created ones' do
+      it 'schedule provision VMs for created ones', sidekiq: true do
         payload = {
           configuration: {
             machines_attributes: [
@@ -192,7 +192,7 @@ describe 'Configurations' do
           ]
         }
       } }
-      it 'schedule provision of VM' do
+      it 'schedule provision of VM', sidekiq: true do
         expect {
           response = post "/api/v1/configurations", payload, headers
           expect(response.status).to eq 200

@@ -16,9 +16,9 @@ class Configuration < ActiveRecord::Base
   validates :name,
     presence: true,
     uniqueness: true,
-    length: {minimum: 3},
+    length: {minimum: 3, maximum: 32},
     format: {
-      with: /\A[A-Za-z0-9_.]+\z/,
+      with: /\A[A-Za-z0-9_. ]+\z/,
       message: "only allows letters, digits, dot and underscore"
     }
   validate :folder_name_did_not_change

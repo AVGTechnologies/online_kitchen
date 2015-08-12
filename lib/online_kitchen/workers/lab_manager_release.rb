@@ -16,7 +16,9 @@ class OnlineKitchen::LabManagerRelease
     time = Benchmark.realtime do
       vm = OnlineKitchen::LabManager.destroy(machine.provider_id)
       machine.update_attributes(state: :deleted)
+      configuration = machine.configuration
       machine.destroy!
+      configuration.schedule_destroy if configuration.machines.count == 0
     end
     OnlineKitchen.logger.info "Machine id:#{machine_id} destroyed in #{time.round(2)} seconds."
     Metriks.timer("online_kitchen.worker.release").update(time)

@@ -1,9 +1,21 @@
 default: &defaults
   templates:
-    - alvin.TA_7x64
-    - alvin.TA_7x86
-    - alvin.TA_XPx86
-    - alvin.TA_8.1x64
+    - norman.NO_10x64
+    - norman.NO_10x86
+    - norman.NO_2k12x64
+    - norman.NO_2k3x64
+    - norman.NO_2k8x64
+    - norman.NO_2k8x64-R2-SP1
+    - norman.NO_2k8x86
+    - norman.NO_7x64
+    - norman.NO_7x86
+    - norman.NO_8.1x64
+    - norman.NO_8.1x86
+    - norman.NO_8x64
+    - norman.NO_8x86
+    - norman.NO_VISTAx64
+    - norman.NO_VISTAx86
+    - norman.NO_XPx86
 
 production:
   <<: *defaults

@@ -5,7 +5,7 @@ default: &defaults
   allowed_origin: '*'
   bind: '0.0.0.0'
   base_url: '/api/v1'
-  reenqueue_release_time: 5
+  reenqueue_release_time: 3
   graphite:
     host: eelk-graphite-dev-idc-prg001.mgm.avg.com
     port: 2003
@@ -21,7 +21,7 @@ default: &defaults
       element_form_default: :qualified
       open_timeout: 1200
       read_timeout: 1600
-    service_endpoint: 'http://10.5.0.26:8732/AVG.Ddtf.LabManager.Petr/'
+    service_endpoint: 'http://10.4.135.2:8732/AVG.Ddtf.LabManager/'
 
 production:
   <<: *defaults

@@ -25,7 +25,7 @@ end
 freezed_machines = Machine.where(state: 'queued').where('updated_at < ?', TOO_LONG_TIME)
 if freezed_machines.count > 0
   OnlineKitchen.logger.error("Removing freezed machines in queued state: #{dump_machines(freezed_machines.to_a)}")
- freezed_machines.delete_all
+  freezed_machines.delete_all
 end
 
 # check destroy_queued machines without provider_id
@@ -58,4 +58,9 @@ if freezed_machines.count > 0
   freezed_machines.delete_all
 end
 
-
+# check for empty configurations
+empty_configurations = Configuration.where('id NOT IN (SELECT DISTINCT(configuration_id) FROM machines)')
+if empty_configurations.count > 0
+  OnlineKitchen.logger.error("Removing #{empty_configurations.count} empty configurations.")
+  empty_configurations.delete_all
+end

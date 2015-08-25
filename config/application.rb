@@ -9,16 +9,13 @@ require 'action_controller/railtie'
 require 'action_view/railtie'
 require 'action_mailer/railtie'
 
-
 Bundler.require
 require 'online_kitchen'
 
 module OnlineKitchen
   class Application < Rails::Application
-
     console do
       OnlineKitchen::Database.connect
     end
   end
 end
-

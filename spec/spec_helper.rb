@@ -9,7 +9,6 @@ require File.expand_path('../../app.rb', __FILE__)
 require File.expand_path('../../lib/online_kitchen/labmanager.rb', __FILE__)
 
 RSpec.configure do |config|
-
   config.filter_run focus: true
   config.run_all_when_everything_filtered = true
 
@@ -27,5 +26,4 @@ RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end
-
 end

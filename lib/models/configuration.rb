@@ -14,13 +14,13 @@ class Configuration < ActiveRecord::Base
   belongs_to :user
 
   validates :name,
-    presence: true,
-    uniqueness: true,
-    length: {minimum: 3, maximum: 32},
-    format: {
-      with: /\A[A-Za-z0-9_. ]+\z/,
-      message: "only allows letters, digits, dot and underscore"
-    }
+            presence: true,
+            uniqueness: true,
+            length: { minimum: 3, maximum: 32 },
+            format: {
+              with: /\A[A-Za-z0-9_. ]+\z/,
+              message: 'only allows letters, digits, dot and underscore'
+            }
   validate :folder_name_did_not_change
 
   strip_attributes
@@ -30,24 +30,24 @@ class Configuration < ActiveRecord::Base
   before_create :copy_name_to_config
 
   def as_json(options = {})
-    #TODO: set only proper attributes
-    #see http://jonathanjulian.com/2010/04/rails-to_json-or-as_json/
+    # TODO: set only proper attributes
+    # see http://jonathanjulian.com/2010/04/rails-to_json-or-as_json/
 
     result = super(options)
-    result["machines_attributes"] = machines.as_json
+    result['machines_attributes'] = machines.as_json
     result
   end
 
   def state
-    states = machines.map { |x| x.state }.uniq
+    states = machines.map(&:state).uniq
 
     case states
-      when ['ready']
-        'ready'
-      when ['destroy_queued']
-        'destroy_queued'
-      else
-        'updating'
+    when ['ready']
+      'ready'
+    when ['destroy_queued']
+      'destroy_queued'
+    else
+      'updating'
     end
   end
 
@@ -57,33 +57,33 @@ class Configuration < ActiveRecord::Base
   end
 
   def schedule_destroy
-    return self.destroy if machines.all?(&:deleted?)
+    return destroy if machines.all?(&:deleted?)
 
-    nested_result = machines.
-      reject(&:deleted_or_destroy_queued?).
-      map(&:schedule_destroy).
-      any?
+    nested_result = machines
+                    .reject(&:deleted_or_destroy_queued?)
+                    .map(&:schedule_destroy)
+                    .any?
 
     nested_result ? update_attributes(deleted: true) : true
   end
 
   def copy_name_to_config
-    self.folder_name = self.name
+    self.folder_name = name
   end
 
   private
 
-    def destroyable?
-      return true if machines.all?(&:deleted?)
-      errors.add(:base, "Cannot delete configuration with living machines")
-      false
-    end
+  def destroyable?
+    return true if machines.all?(&:deleted?)
+    errors.add(:base, 'Cannot delete configuration with living machines')
+    false
+  end
 
-    def folder_name_did_not_change
-      # note: persisted returns true in case change is
-      #       NOT caused by adding or removing record to DB
-      if folder_name_changed? && self.persisted?
-        errors.add(:folder_name, "was changed. You cannot change folder_name of already created instance.")
-      end
+  def folder_name_did_not_change
+    # note: persisted returns true in case change is
+    #       NOT caused by adding or removing record to DB
+    if folder_name_changed? && self.persisted?
+      errors.add(:folder_name, 'was changed. You cannot change folder_name of already created instance.')
     end
+  end
 end

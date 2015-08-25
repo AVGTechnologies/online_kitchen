@@ -25,7 +25,6 @@ require 'active_support/core_ext/object/blank'
 
 module OnlineKitchen
   class LabManager
-
     attr_reader :vm
 
     class << self
@@ -34,12 +33,12 @@ module OnlineKitchen
       end
 
       def release_machine(name)
-        response = client.call(:release_machine, message: { machine_name: name } )
-      rescue Savon::SOAPFault => err #TODO: specify exceptions
-        OnlineKitchen.logger.error "Release machine failed: #{err.inspect}, #{$@}"
+        response = client.call(:release_machine, message: { machine_name: name })
+      rescue Savon::SOAPFault => err # TODO: specify exceptions
+        OnlineKitchen.logger.error "Release machine failed: #{err.inspect}, #{$ERROR_POSITION}"
         raise
       end
-      alias :destroy :release_machine
+      alias_method :destroy, :release_machine
 
       def client
         @client ||= Savon.client(client_config)
@@ -47,7 +46,7 @@ module OnlineKitchen
 
       def client_config
         soap_config = OnlineKitchen.config.soap_config
-        raise "soap.service_endpoint must be specified in the config!" if soap_config[:service_endpoint].blank?
+        fail 'soap.service_endpoint must be specified in the config!' if soap_config[:service_endpoint].blank?
         res = {
           env_namespace: :s,
           namespace_identifier: nil,
@@ -56,10 +55,9 @@ module OnlineKitchen
           read_timeout: 1600
         }.deep_merge(soap_config[:service_config].symbolize_keys)
         res[:wsdl] = soap_config[:service_endpoint]
-        res[:wsdl] << "?wsdl" unless res[:wsdl] =~ /\?wsdl\z/
+        res[:wsdl] << '?wsdl' unless res[:wsdl] =~ /\?wsdl\z/
         res
       end
-
     end
 
     def initialize
@@ -67,7 +65,7 @@ module OnlineKitchen
     end
 
     def destroy
-      self.class.release_machine(vm[:name]) if vm and vm[:name]
+      self.class.release_machine(vm[:name]) if vm && vm[:name]
       @vm = {}
       self
     end
@@ -81,40 +79,39 @@ module OnlineKitchen
     end
 
     def provision_machine(opts = {})
-      begin
-        response = client.call(:provision_machine, message: { specification: provision_machine_builder(opts).doc.root.to_s } )
-        px =  Nokogiri.parse(response.body[:provision_machine_response][:provision_machine_result]);
-        ip = px.xpath("//IP").first.inner_html.to_s
-        name = px.xpath("//name").first.inner_html.to_s
+      response = client.call(:provision_machine, message: { specification: provision_machine_builder(opts).doc.root.to_s })
+      px = Nokogiri.parse(response.body[:provision_machine_response][:provision_machine_result])
+      ip = px.xpath('//IP').first.inner_html.to_s
+      name = px.xpath('//name').first.inner_html.to_s
 
-        OnlineKitchen.logger.info "Got PC with IP: #{ip}, name: #{name}"
-        @vm = {:name => name, :ip => ip}
-        self
-      rescue
-        OnlineKitchen.logger.error "Deploy machine failed: #{$!.inspect}, #{$@}"
-        raise
-      end
+      OnlineKitchen.logger.info "Got PC with IP: #{ip}, name: #{name}"
+      @vm = { name: name, ip: ip }
+      self
+    rescue
+      OnlineKitchen.logger.error "Deploy machine failed: #{$ERROR_INFO.inspect}, #{$ERROR_POSITION}"
+      raise
     end
 
     private
-      def client
-        @client ||= self.class.client
-      end
 
-      def client_config
-        self.class.client_config
-      end
+    def client
+      @client ||= self.class.client
+    end
 
-      def provision_machine_builder(opts)
-        Nokogiri::XML::Builder.new do |xml|
-          xml.xml {
-            xml.folder opts[:vms_folder]
-            xml.templateName opts[:image]
-            xml.guid opts[:uuid] || SecureRandom.uuid
-            xml.requestorUserName (opts[:requestor])
-            xml.testId opts[:job_id]
-          }
+    def client_config
+      self.class.client_config
+    end
+
+    def provision_machine_builder(opts)
+      Nokogiri::XML::Builder.new do |xml|
+        xml.xml do
+          xml.folder opts[:vms_folder]
+          xml.templateName opts[:image]
+          xml.guid opts[:uuid] || SecureRandom.uuid
+          xml.requestorUserName (opts[:requestor])
+          xml.testId opts[:job_id]
         end
       end
+    end
   end
 end

@@ -5,7 +5,7 @@ class CreateMachines < ActiveRecord::Migration
       t.string :image
       t.string :state,     default: 'queued'
 
-      t.string :ip #TODO check inet type
+      t.string :ip # TODO: check inet type
       t.string :provider_id
 
       t.text :environment

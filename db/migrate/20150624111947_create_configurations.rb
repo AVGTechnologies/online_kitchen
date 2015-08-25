@@ -1,7 +1,7 @@
 class CreateConfigurations < ActiveRecord::Migration
   def change
     create_table :configurations do |t|
-      t.string      :name,        null: false, default: ""
+      t.string      :name,        null: false, default: ''
       t.string      :folder_name
 
       t.references  :user

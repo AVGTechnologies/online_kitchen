@@ -1,7 +1,6 @@
 #!/usr/bin/ruby
 
-
-$: << 'lib'
+$LOAD_PATH << 'lib'
 require 'online_kitchen'
 
 OnlineKitchen.setup
@@ -11,7 +10,7 @@ VERY_LONG_TIME = 3.days.ago
 
 def dump_machines(machines)
   machines.map do |m|
-    "machine[%d]: %s, configuration: %d, created_at: %s, updated_at: %s" % [
+    'machine[%d]: %s, configuration: %d, created_at: %s, updated_at: %s' % [
       m.id,
       m.name,
       m.configuration_id,
@@ -29,7 +28,7 @@ if freezed_machines.count > 0
 end
 
 # check destroy_queued machines without provider_id
-freezed_machines = Machine.where(state: 'destroy_queued').where("(provider_id IS NULL) OR (provider_id = ?)", '').where('updated_at < ?', TOO_LONG_TIME)
+freezed_machines = Machine.where(state: 'destroy_queued').where('(provider_id IS NULL) OR (provider_id = ?)', '').where('updated_at < ?', TOO_LONG_TIME)
 if freezed_machines.count > 0
   OnlineKitchen.logger.error("Removing freezed machines in destroy_queued state without privider_id: #{dump_machines(freezed_machines.to_a)}")
   freezed_machines.delete_all

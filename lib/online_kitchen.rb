@@ -10,7 +10,6 @@ require 'sidekiq'
 
 module OnlineKitchen
   class << self
-
     def config
       OnlineKitchen::Config
     end
@@ -32,15 +31,14 @@ module OnlineKitchen
 
       logger.level = config.log_level || Logger::WARN
 
-      if config.log_level == Logger::DEBUG
-        Sidekiq.default_worker_options = { 'backtrace' => true }
-      end
+      Sidekiq.default_worker_options = { 'backtrace' => true } if
+        config.log_level == Logger::DEBUG
 
       ::Raven.configure do |config|
         config.dsn = OnlineKitchen.config.sentry_dsn
-        config.environments = %w[ production ]
+        config.environments = %w( production )
         config.current_environment = OnlineKitchen.env
-        config.excluded_exceptions = %w{Siatra::NotFound}
+        config.excluded_exceptions = %w(Sinatra::NotFound)
       end
 
       Metriks::Reporter::Graphite.new(
@@ -48,8 +46,6 @@ module OnlineKitchen
         config.graphite.port,
         config.graphite.options || {}
       ) if config.graphite
-
-
     end
   end
 

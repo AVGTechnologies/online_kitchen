@@ -18,6 +18,5 @@ class ProviderTemplate < Settingslogic
     end
   end
 
-  #TODO add functionality for specific clusters?
-
+  # TODO: add functionality for specific clusters?
 end

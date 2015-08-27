@@ -1,24 +1,22 @@
 # Service providing the Online Kitchen functionality
 
-$: << 'lib'
+$LOAD_PATH << 'lib'
 require 'bundler/setup'
-
 require 'rack'
 require 'rack/contrib'
 require 'sinatra/base'
-require "sinatra/namespace"
-
+require 'sinatra/namespace'
 require 'online_kitchen'
 require 'active_support'
 
 OnlineKitchen.setup
 
 module OnlineKitchen
+  # Application class
   class App < Sinatra::Base
-
     register Sinatra::Namespace
     set :bind, OnlineKitchen.config.bind
-    set :protection, :origin_whitelist => OnlineKitchen.config.allowed_origin
+    set :protection, origin_whitelist: OnlineKitchen.config.allowed_origin
     set :show_exceptions, false
 
     use Raven::Rack
@@ -31,12 +29,18 @@ module OnlineKitchen
     end
 
     namespace OnlineKitchen.config.base_url do
-      options "*" do
-        response.headers["Access-Control-Allow-Methods"] = "HEAD, GET, PUT, POST, DELETE, OPTIONS"
-
+      options '*' do
+        response.headers['Access-Control-Allow-Methods'] =
+          'HEAD, GET, PUT, POST, DELETE, OPTIONS'
         # Needed for AngularJS
-        response.headers["Access-Control-Allow-Headers"] = "X-Requested-With, X-HTTP-Method-Override, Content-Type, Cache-Control, Accept, userName, authenticationToken"
-
+        response.headers['Access-Control-Allow-Headers'] =
+          'X-Requested-With, ' \
+          'X-HTTP-Method-Override, ' \
+          'Content-Type, ' \
+          'Cache-Control, ' \
+          'Accept, ' \
+          'userName, ' \
+          'authenticationToken'
         halt 200
       end
 
@@ -55,18 +59,26 @@ module OnlineKitchen
       post '/configurations' do
         configuration = current_user.configurations.new(params[:configuration])
         if configuration.save
-          halt 200, { status: :success, configuration: configuration }.to_json
+          halt 200, {
+            status: :success,
+            configuration: configuration }.to_json
         else
-          halt 422, { status: :unprocessable_entity, errors: configuration.errors.to_h }.to_json
+          halt 422, {
+            status: :unprocessable_entity,
+            errors: configuration.errors.to_h }.to_json
         end
       end
 
       put '/configurations/:id' do |id|
         configuration = current_user.configurations.find(id)
         if configuration.update_attributes(params[:configuration])
-          halt 200, { status: :success, configuration: configuration }.to_json
+          halt 200, {
+            status: :success,
+            configuration: configuration }.to_json
         else
-          halt 422, { status: :unprocessable_entity, errors: configuration.errors.to_h }.to_json
+          halt 422, {
+            status: :unprocessable_entity,
+            errors: configuration.errors.to_h }.to_json
         end
       end
 
@@ -74,16 +86,19 @@ module OnlineKitchen
         configuration = current_user.configurations.find(id)
         if configuration.schedule_destroy
           configuration = nil if configuration.destroyed?
-          halt 200, { status: :success, configuration: configuration }.to_json
+          halt 200, {
+            status: :success,
+            configuration: configuration }.to_json
         else
-          halt 422, { status: :unprocessable_entity, errors: configuration.errors.to_h }.to_json
+          halt 422, {
+            status: :unprocessable_entity,
+            errors: configuration.errors.to_h }.to_json
         end
       end
-
     end
 
     error ActiveRecord::RecordNotFound do
-      halt 404, { message: "Not found" }.to_json
+      halt 404, { message: 'Not found' }.to_json
     end
 
     error ActiveRecord::RecordInvalid do
@@ -103,10 +118,9 @@ module OnlineKitchen
       }.to_json
     end
 
-
-    #FIXME: does not work
+    # FIXME: does not work
     error JSON::ParserError do
-      halt 400, { message: "Cannot parse JSON" }.to_json
+      halt 400, { message: 'Cannot parse JSON' }.to_json
     end
 
     def current_user
@@ -117,11 +131,13 @@ module OnlineKitchen
     private
 
     def authenticate_user
-      @user_name = get_header_value("UserName")
-      @authentication_token = get_header_value("AuthenticationToken")
-      if @user_name.blank? or @authentication_token.blank?
-        halt 401, {:result => 'error', :message => "Invalid user credentials"}.to_json
-      end
+      @user_name = get_header_value('UserName')
+      @authentication_token = get_header_value('AuthenticationToken')
+
+      return unless @user_name.blank? || @authentication_token.blank?
+
+      halt 401, { result: 'error',
+                  message: 'Invalid user credentials' }.to_json
     end
 
     def get_header_value(name)
@@ -129,10 +145,11 @@ module OnlineKitchen
       variable = "HTTP_#{name}"
       value = env[variable]
 
-      return nil if value == nil
-      value.downcase != "null" ? value : nil
+      return nil if value.nil?
+      value.downcase != 'null' ? value : nil
     end
 
-    run! if app_file == $0 # This makes the app launchanble like "ruby app.rb"
+    # This makes the app launchanble like "ruby app.rb"
+    run! if app_file == $PROGRAM_NAME
   end
 end

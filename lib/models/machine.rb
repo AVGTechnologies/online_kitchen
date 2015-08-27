@@ -16,23 +16,23 @@ class Machine < ActiveRecord::Base
   belongs_to :configuration, inverse_of: :machines
 
   validates :name,
-    presence: true,
-    length: {minimum: 3},
-    format: {
-      with: /\A[A-Za-z0-9_\. ()#\-<>:\|\\\[\]\/]+\z/,
-      message: "only allows alphanumeric, brackets and some more special characters"
-    }
+            presence: true,
+            length: { minimum: 3 },
+            format: {
+              with: /\A[A-Za-z0-9_\. ()#\-<>:\|\\\[\]\/]+\z/,
+              message: 'only allows alphanumeric, brackets and some more special characters'
+            }
 
   validates :state, inclusion: { in: %w(queued ready destroy_queued deleted) }
   validates :provider_id, presence: true, if:  ->(s) { s.state == 'ready' }
-  validate  :environment_has_allowed_structure
-  validate  :image_is_valid
+  validate :environment_has_allowed_structure
+  validate :image_is_valid
 
   after_commit :schedule_provision_vm, on: :create
 
   serialize :environment, JSON
 
-  strip_attributes :except => :environment
+  strip_attributes except: :environment
 
   delegate :user, :folder_name, to: :configuration
 
@@ -43,7 +43,7 @@ class Machine < ActiveRecord::Base
   end
 
   def template
-    "%s.%s" % [cluster, image]
+    '%s.%s' % [cluster, image]
   end
 
   def template=(value)
@@ -53,7 +53,7 @@ class Machine < ActiveRecord::Base
   end
 
   def job_id
-    "%d.%d" % [configuration.id, id]
+    '%d.%d' % [configuration.id, id]
   end
 
   def deleted?
@@ -65,63 +65,63 @@ class Machine < ActiveRecord::Base
   end
 
   def deleted_or_destroy_queued?
-    deleted? or destroy_queued?
+    deleted? || destroy_queued?
   end
 
   def destroy
     if deleted?
-      #VM is not running therefore I can delete AR object
-      OnlineKitchen.logger.info "Destroying machine: #{self.id}"
+      # VM is not running therefore I can delete AR object
+      OnlineKitchen.logger.info "Destroying machine: #{id}"
       super
     elsif state == 'destroy_queued'
-      OnlineKitchen.logger.info "Machine: #{self.id} is already scheduled to destroy."
+      OnlineKitchen.logger.info "Machine: #{id} is already scheduled to destroy."
     else
-      OnlineKitchen.logger.info "Scheduling releasing for machine: #{self.id}"
+      OnlineKitchen.logger.info "Scheduling releasing for machine: #{id}"
       self.state = 'destroy_queued'
-      self.save
+      save
       run_callbacks :destroy
-      OnlineKitchen::LabManagerRelease.perform_async(self.id)
+      OnlineKitchen::LabManagerRelease.perform_async(id)
       freeze
     end
   end
 
   def schedule_destroy
-    OnlineKitchen.logger.info "Scheduling releasing for machine: #{self.id}"
-    OnlineKitchen::LabManagerRelease.perform_async(self.id)
+    OnlineKitchen.logger.info "Scheduling releasing for machine: #{id}"
+    OnlineKitchen::LabManagerRelease.perform_async(id)
     update_attributes(state: :destroy_queued)
   end
 
   private
 
-    def schedule_provision_vm
-      OnlineKitchen.logger.info "Scheduling provision for machine: #{self.id}"
-      OnlineKitchen::LabManagerProvision.perform_async(self.id)
+  def schedule_provision_vm
+    OnlineKitchen.logger.info "Scheduling provision for machine: #{id}"
+    OnlineKitchen::LabManagerProvision.perform_async(id)
+  end
+
+  def environment_has_allowed_structure
+    return if environment.nil?
+
+    unless Hash === environment
+      errors.add(:environment, 'has to be Hash (key-value) like structure')
+      return false
     end
 
-    def environment_has_allowed_structure
-      return if self.environment.nil?
-
-      unless Hash === environment
-        errors.add(:environment, "has to be Hash (key-value) like structure")
+    environment.each do |key, value|
+      unless key =~ /\A[A-Za-z][A-Za-z0-9_]*\z/
+        errors.add(:environment, 'keys has to be Literal (e.g. start on letter followed by letter, digits or underscore)')
         return false
       end
-
-      environment.each do |key, value|
-        unless key =~ /\A[A-Za-z][A-Za-z0-9_]*\z/
-          errors.add(:environment, "keys has to be Literal (e.g. start on letter followed by letter, digits or underscore)")
-          return false
-        end
-        unless String === value
-          errors.add(:environment, "value has to be String")
-          return false
-        end
-      end
-      true
-    end
-
-    def image_is_valid
-      unless ProviderTemplate.include_image?(image)
-        errors.add(:image, "passed image is not supported")
+      unless String === value
+        errors.add(:environment, 'value has to be String')
+        return false
       end
     end
+    true
+  end
+
+  def image_is_valid
+    unless ProviderTemplate.include_image?(image)
+      errors.add(:image, 'passed image is not supported')
+    end
+  end
 end

@@ -1,7 +1,6 @@
 FactoryGirl.define do
-
   factory :user do |f|
-    f.sequence(:name)   { |n| "CZ\\Franta.Lopata#{n}" }
+    f.sequence(:name) { |n| "CZ\\Franta.Lopata#{n}" }
   end
 
   factory :configuration do |f|
@@ -16,5 +15,4 @@ FactoryGirl.define do
     f.sequence(:name)   { |n| "test.name#{n}" }
     f.template          { ProviderTemplate.first }
   end
-
 end

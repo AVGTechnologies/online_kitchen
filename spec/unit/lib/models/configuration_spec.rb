@@ -1,12 +1,10 @@
 require 'spec_helper'
 
 describe 'Configuration' do
-
-  let!(:configuration) { FactoryGirl.build(:configuration, machines: [])  }
+  let!(:configuration) { FactoryGirl.build(:configuration, machines: []) }
   subject { configuration }
 
-  describe "state" do
-
+  describe 'state' do
     it "equals 'ready' when all machines ready" do
       configuration.machines = FactoryGirl.build_list(:machine, 2, state: :ready)
 
@@ -25,39 +23,36 @@ describe 'Configuration' do
 
       expect(subject.state).to eq 'updating'
     end
-
   end
 
-  it "validates name to contain only alphanumeric characters, dot, space and underscore" do
-    goodConfiguration = FactoryGirl.build(:configuration, name: "MyFolder.Is_Good 42")
-    expect(goodConfiguration.valid?).to be true
+  it 'validates name for alphanumeric characters, dot, space and underscore' do
+    good_configuration = FactoryGirl.build(:configuration, name: 'MyFolder.Is_Good 42')
+    expect(good_configuration.valid?).to be true
 
-    badConfiguration = FactoryGirl.build(:configuration, name: "čučoriedka")
-    badConfiguration.valid?
-    expect(badConfiguration.errors).to have_key(:name)
+    bad_configuration = FactoryGirl.build(:configuration, name: 'čučoriedka')
+    bad_configuration.valid?
+    expect(bad_configuration.errors).to have_key(:name)
   end
 
-  it "does not allow change of folder_name after creation" do
+  it 'does not allow change of folder_name after creation' do
     subject.save!
-    subject.folder_name = "and_now_for_something_completely_different"
+    subject.folder_name = 'and_now_for_something_completely_different'
 
     expect(subject.valid?).to be false
     expect(subject.errors).to have_key(:folder_name)
   end
 
-  it "does set folder_name on creation to name of configuration" do
+  it 'does set folder_name on creation to name of configuration' do
     subject.save!
 
     expect(subject.folder_name).to eq(subject.name)
   end
 
-  it "does not allow name longer than 32 characters" do
-    badConfiguration = FactoryGirl.build(:configuration,
-      name: "This_Is_Indeed_A_Very_Long_Name_Whose_Usability_With_VMWare_Is_Risky")
+  it 'does not allow name longer than 32 characters' do
+    bad_configuration =
+      FactoryGirl.build(:configuration, name: 'This_Is_Indeed_A_Very_Long_Unacceptable_Name')
 
-    expect(badConfiguration.valid?).to be false
-    expect(badConfiguration.errors).to have_key(:name)
+    expect(bad_configuration.valid?).to be false
+    expect(bad_configuration.errors).to have_key(:name)
   end
-
-
 end

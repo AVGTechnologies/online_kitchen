@@ -34,18 +34,29 @@ module OnlineKitchen
       Sidekiq.default_worker_options = { 'backtrace' => true } if
         config.log_level == Logger::DEBUG
 
+      setup_raven
+      setup_metriks
+    end
+
+    def setup_raven
+      return unless config.sentry_dsn
+
       ::Raven.configure do |config|
         config.dsn = OnlineKitchen.config.sentry_dsn
-        config.environments = %w( production )
         config.current_environment = OnlineKitchen.env
         config.excluded_exceptions = %w(Sinatra::NotFound)
       end
+    end
 
-      Metriks::Reporter::Graphite.new(
+    def setup_metriks
+      return unless config.graphite
+
+      reporter = Metriks::Reporter::Graphite.new(
         config.graphite.host,
         config.graphite.port,
         config.graphite.options || {}
-      ) if config.graphite
+      )
+      reporter.start
     end
   end
 

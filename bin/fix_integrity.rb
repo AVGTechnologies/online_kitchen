@@ -21,45 +21,56 @@ def dump_machines(machines)
 end
 
 # check queued state doesnt take too long
-freezed_machines = Machine.where(state: 'queued').where('updated_at < ?', TOO_LONG_TIME)
-if freezed_machines.count > 0
-  OnlineKitchen.logger.error("Removing freezed machines in queued state: #{dump_machines(freezed_machines.to_a)}")
-  freezed_machines.delete_all
+lonq_queued = Machine.queued_older_than(TOO_LONG_TIME)
+if lonq_queued.count > 0
+  OnlineKitchen.logger.error(
+    'Removing freezed machines in queued state: ' \
+    "#{dump_machines(lonq_queued.to_a)}")
+  lonq_queued.delete_all
 end
 
 # check destroy_queued machines without provider_id
-freezed_machines = Machine.where(state: 'destroy_queued').where('(provider_id IS NULL) OR (provider_id = ?)', '').where('updated_at < ?', TOO_LONG_TIME)
-if freezed_machines.count > 0
-  OnlineKitchen.logger.error("Removing freezed machines in destroy_queued state without privider_id: #{dump_machines(freezed_machines.to_a)}")
-  freezed_machines.delete_all
+machines = Machine.destroy_queued_machines_without_provider_id(TOO_LONG_TIME)
+if machines.count > 0
+  OnlineKitchen.logger.error(
+    'Removing freezed machines in destroy_queued state without provider_id: ' \
+    "#{dump_machines(machines.to_a)}")
+  machines.delete_all
 end
 
 # check destroy_queued take too long => requeue
-freezed_machines = Machine.where(state: 'destroy_queued').where('updated_at < ?', TOO_LONG_TIME)
-if freezed_machines.count > 0
-  OnlineKitchen.logger.error("Reenqueues releasing freezed machines in destroy_queued state: #{dump_machines(freezed_machines.to_a)}")
-  freezed_machines.find_each do |machine|
+destroy_queued = Machine.destroy_queued_older_than(TOO_LONG_TIME)
+if destroy_queued.count > 0
+  OnlineKitchen.logger.error(
+    'Reenqueues releasing freezed machines in destroy_queued state: ' \
+    "#{dump_machines(destroy_queued.to_a)}")
+  destroy_queued.find_each do |machine|
     OnlineKitchen::LabManagerRelease.perform_async(machine.id)
   end
 end
 
 # check destroy_queued and remove very old instances
-freezed_machines = Machine.where(state: 'destroy_queued').where('updated_at < ?', VERY_LONG_TIME)
+freezed_machines = Machine.destroy_queued_older_than(VERY_LONG_TIME)
 if freezed_machines.count > 0
-  OnlineKitchen.logger.error("Removing freezed machines in destroyed_queued state: #{dump_machines(freezed_machines.to_a)}")
+  OnlineKitchen.logger.error(
+    'Removing freezed machines in destroyed_queued state: ' \
+    "#{dump_machines(freezed_machines.to_a)}")
   freezed_machines.delete_all
 end
 
 # check deleted state doesnt take too long
-freezed_machines = Machine.where(state: 'deleted').where('updated_at < ?', TOO_LONG_TIME)
-if freezed_machines.count > 0
-  OnlineKitchen.logger.error("Removing freezed machines in deleted state: #{dump_machines(freezed_machines.to_a)}")
-  freezed_machines.delete_all
+deleted_machines = Machine.deleted_older_than(TOO_LONG_TIME)
+if deleted_machines.count > 0
+  OnlineKitchen.logger.error(
+    'Removing freezed machines in deleted state: ' \
+    "#{dump_machines(deleted_machines.to_a)}")
+  deleted_machines.delete_all
 end
 
 # check for empty configurations
-empty_configurations = Configuration.where('id NOT IN (SELECT DISTINCT(configuration_id) FROM machines)')
+empty_configurations = Configuration.empty_configurations
 if empty_configurations.count > 0
-  OnlineKitchen.logger.error("Removing #{empty_configurations.count} empty configurations.")
+  OnlineKitchen.logger.error(
+    "Removing #{empty_configurations.count} empty configurations.")
   empty_configurations.delete_all
 end

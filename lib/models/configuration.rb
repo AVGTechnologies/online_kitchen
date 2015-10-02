@@ -29,6 +29,10 @@ class Configuration < ActiveRecord::Base
 
   before_create :copy_name_to_config
 
+  scope :empty_configurations, -> do
+    where('id NOT IN (SELECT DISTINCT(configuration_id) FROM machines)')
+  end
+
   def as_json(options = {})
     # TODO: set only proper attributes
     # see http://jonathanjulian.com/2010/04/rails-to_json-or-as_json/

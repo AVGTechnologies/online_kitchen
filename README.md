@@ -1,3 +1,5 @@
+[![Code Climate](https://codeclimate.com/github/AVGTechnologies/online_kitchen/badges/gpa.svg)](https://codeclimate.com/github/AVGTechnologies/online_kitchen)
+
 Online Kitchen
 ==============
 

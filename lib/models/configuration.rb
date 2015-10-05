@@ -2,11 +2,15 @@
 #
 # Table name: configurations
 #
-#  id         :integer          not null, primary key
-#  name       :string           default(""), not null
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id          :integer          not null, primary key
+#  name        :string           default(""), not null
+#  folder_name :string
+#  user_id     :integer
+#  deleted     :boolean          default(FALSE), not null
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
 #
+
 require 'active_support'
 
 class Configuration < ActiveRecord::Base

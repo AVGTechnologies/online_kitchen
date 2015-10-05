@@ -2,14 +2,17 @@
 #
 # Table name: machines
 #
-#  id                  :integer          not null, primary key
-#  name                :string
-#  cluster             :string
-#  image               :string
-#  environment         :text
-#  configuration_id_id :integer
-#  created_at          :datetime         not null
-#  updated_at          :datetime         not null
+#  id               :integer          not null, primary key
+#  name             :string
+#  image            :string
+#  state            :string           default("queued")
+#  ip               :string
+#  provider_id      :string
+#  environment      :text
+#  configuration_id :integer
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#  cluster          :string
 #
 
 class Machine < ActiveRecord::Base

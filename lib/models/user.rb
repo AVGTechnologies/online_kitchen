@@ -1,3 +1,13 @@
+# == Schema Information
+#
+# Table name: users
+#
+#  id         :integer          not null, primary key
+#  name       :string           default(""), not null
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#
+
 class User < ActiveRecord::Base
   has_many :configurations, dependent: :destroy, inverse_of: :user
 

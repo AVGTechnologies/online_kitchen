@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/AVGTechnologies/online_kitchen.svg?branch=master)](https://travis-ci.org/AVGTechnologies/online_kitchen)
 [![Code Climate](https://codeclimate.com/github/AVGTechnologies/online_kitchen/badges/gpa.svg)](https://codeclimate.com/github/AVGTechnologies/online_kitchen)
 
 Online Kitchen

@@ -36,6 +36,28 @@ class Machine < ActiveRecord::Base
 
   delegate :user, :folder_name, to: :configuration
 
+  scope :queued_longer_than, ->(time) do
+    where(state: 'queued').where('updated_at < ?', time)
+  end
+
+  scope :destroy_queued_older_than, ->(time) do
+    where(state: 'destroy_queued').where('updated_at < ?', time)
+  end
+
+  scope :deleted_older_than, ->(time) do
+    where(state: 'deleted').where('updated_at < ?', time)
+  end
+
+  scope :destroy_queued_machines_without_provider_id, ->(time) do
+    where(state: 'destroy_queued')
+      .where('(provider_id IS NULL) OR (provider_id = ?)', '')
+      .where('updated_at < ?', time)
+  end
+
+  scope :destroy_queued_machines_without_provider_id, ->(time) do
+    where(state: 'destroy_queued').where('updated_at < ?', time)
+  end
+
   def as_json(options = {})
     h = super(options)
     h['template'] = template

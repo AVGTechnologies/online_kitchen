@@ -38,8 +38,8 @@ class Machine < ActiveRecord::Base
   strip_attributes except: :environment
 
   delegate :user, :folder_name, to: :configuration
-
-  scope :queued_longer_than, ->(time) do
+                           
+  scope :queued_older_than, ->(time) do
     where(state: 'queued').where('updated_at < ?', time)
   end
 

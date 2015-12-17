@@ -22,7 +22,10 @@ default: &defaults
       open_timeout: 1200
       read_timeout: 1600
     service_endpoint: 'http://10.4.135.2:8732/AVG.Ddtf.LabManager/'
-
+  redis:
+      url: redis://localhost:6379/0
+      namespace: online_kitchen
+      
 production:
   <<: *defaults
 

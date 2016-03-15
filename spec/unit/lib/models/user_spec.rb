@@ -25,18 +25,23 @@ describe User do
       expect(subject.valid?).to be true
     end
 
-    it 'can have dot' do
+    it 'can have a dot' do
       user.update(name: 'petr.svetr')
       expect(subject.valid?).to be true
     end
 
-    it 'can have number' do
+    it 'can have a number' do
       user.update(name: 'petr.svetr2')
       expect(subject.valid?).to be true
     end
 
     it 'can have domain specified' do
       user.update(name: 'CZ\\petr.svetr')
+      expect(subject.valid?).to be true
+    end
+
+    it 'can have a dash' do
+      user.update(name: 'daniel.day-lewis')
       expect(subject.valid?).to be true
     end
   end

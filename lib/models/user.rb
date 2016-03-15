@@ -16,8 +16,8 @@ class User < ActiveRecord::Base
             length: { minimum: 5 },
             uniqueness: { scope: :id },
             format: {
-              with: /\A[[[:alnum:]]._\\]+\z/,
-              message: 'allows letters, dots, underscores and numbers'
+              with: /\A[[[:alnum:]]._\-\\]+\z/,
+              message: 'allows letters, dots, underscores, dashes and numbers'
             }
 
   strip_attributes
@@ -34,3 +34,4 @@ class User < ActiveRecord::Base
     false
   end
 end
+

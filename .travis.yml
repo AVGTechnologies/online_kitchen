@@ -11,4 +11,7 @@ before_script: |
   cp config/templates.yml.example config/templates.yml
   rake db:create db:migrate
 
-script: bundle exec rspec
+script:
+  - bundle exec rubocop
+  - bundle exec rspec
+

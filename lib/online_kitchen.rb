@@ -8,6 +8,7 @@ require 'metriks'
 require 'metriks/reporter/graphite'
 require 'sidekiq'
 
+# Configuration and setup for online kitchen
 module OnlineKitchen
   class << self
     def config
@@ -30,23 +31,23 @@ module OnlineKitchen
       OnlineKitchen::Database.connect
 
       logger.level = config.log_level || Logger::WARN
-      
+
       setup_sidekiq
       setup_raven
       setup_metriks
     end
-    
+
     def setup_sidekiq
       Sidekiq.default_worker_options = { 'backtrace' => true } if
         config.log_level == Logger::DEBUG
-        
+
       Sidekiq.configure_server do |config|
         config.redis = OnlineKitchen.config.redis
       end
-      
+
       Sidekiq.configure_client do |config|
         config.redis = OnlineKitchen.config.redis
-      end      
+      end
     end
 
     def setup_raven

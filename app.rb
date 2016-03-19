@@ -61,11 +61,13 @@ module OnlineKitchen
         if configuration.save
           halt 200, {
             status: :success,
-            configuration: configuration }.to_json
+            configuration: configuration
+          }.to_json
         else
           halt 422, {
             status: :unprocessable_entity,
-            errors: configuration.errors.to_h }.to_json
+            errors: configuration.errors.to_h
+          }.to_json
         end
       end
 
@@ -74,11 +76,13 @@ module OnlineKitchen
         if configuration.update_attributes(params[:configuration])
           halt 200, {
             status: :success,
-            configuration: configuration }.to_json
+            configuration: configuration
+          }.to_json
         else
           halt 422, {
             status: :unprocessable_entity,
-            errors: configuration.errors.to_h }.to_json
+            errors: configuration.errors.to_h
+          }.to_json
         end
       end
 
@@ -88,11 +92,13 @@ module OnlineKitchen
           configuration = nil if configuration.destroyed?
           halt 200, {
             status: :success,
-            configuration: configuration }.to_json
+            configuration: configuration
+          }.to_json
         else
           halt 422, {
             status: :unprocessable_entity,
-            errors: configuration.errors.to_h }.to_json
+            errors: configuration.errors.to_h
+          }.to_json
         end
       end
     end
@@ -146,7 +152,7 @@ module OnlineKitchen
       value = env[variable]
 
       return nil if value.nil?
-      value.downcase != 'null' ? value : nil
+      value.casecmp('null') == 0 ? nil : value
     end
 
     # This makes the app launchanble like "ruby app.rb"

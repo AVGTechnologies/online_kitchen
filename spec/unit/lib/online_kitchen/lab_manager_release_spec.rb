@@ -3,9 +3,12 @@ require 'spec_helper'
 describe 'LabManagerRelease' do
   let!(:lab_manager_release) { OnlineKitchen::LabManagerRelease.new }
   subject { lab_manager_release }
-
-  let(:machine_in_ready_state) { FactoryGirl.build(:machine, state: :ready, provider_id: :provisioned_machine) }
-  let(:configuration_in_ready_state) { FactoryGirl.build(:configuration, machines: [machine_in_ready_state]) }
+  let(:machine_in_ready_state) do
+    FactoryGirl.build(:machine, state: :ready, provider_id: :provisioned_machine)
+  end
+  let(:configuration_in_ready_state) do
+    FactoryGirl.build(:configuration, machines: [machine_in_ready_state])
+  end
 
   it 'releases configuration once last machine is dropped' do
     expect(configuration_in_ready_state).to receive(:schedule_destroy).once

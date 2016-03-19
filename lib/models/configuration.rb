@@ -13,6 +13,7 @@
 
 require 'active_support'
 
+# Configuration representation
 class Configuration < ActiveRecord::Base
   has_many :machines, dependent: :destroy, inverse_of: :configuration
   belongs_to :user
@@ -33,9 +34,9 @@ class Configuration < ActiveRecord::Base
 
   before_create :copy_name_to_config
 
-  scope :empty_configurations, -> do
+  scope :empty_configurations, lambda {
     where('id NOT IN (SELECT DISTINCT(configuration_id) FROM machines)')
-  end
+  }
 
   def as_json(options = {})
     # TODO: set only proper attributes
@@ -90,8 +91,9 @@ class Configuration < ActiveRecord::Base
   def folder_name_did_not_change
     # note: persisted returns true in case change is
     #       NOT caused by adding or removing record to DB
-    if folder_name_changed? && self.persisted?
-      errors.add(:folder_name, 'was changed. You cannot change folder_name of already created instance.')
+    if folder_name_changed? && persisted?
+      errors.add(:folder_name,
+                 'was changed. You cannot change folder_name of already created instance.')
     end
   end
 end

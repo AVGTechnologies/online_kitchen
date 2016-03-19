@@ -1,4 +1,5 @@
 module OnlineKitchen
+  # Database encapsulation
   module Database
     class << self
       def config

@@ -4,15 +4,15 @@ FactoryGirl.define do
   end
 
   factory :configuration do |f|
-    f.sequence(:name)   { |n| "configuration.name#{n}" }
-    f.user              { FactoryGirl.create(:user) }
+    f.sequence(:name) { |n| "configuration.name#{n}" }
+    f.user { FactoryGirl.create(:user) }
     f.factory :configuration_with_machines do
-      f.machines        { build_list(:machine, 3) }
+      f.machines { build_list(:machine, 3) }
     end
   end
 
   factory :machine do |f|
-    f.sequence(:name)   { |n| "test.name#{n}" }
-    f.template          { ProviderTemplate.first }
+    f.sequence(:name) { |n| "test.name#{n}" }
+    f.template { ProviderTemplate.first }
   end
 end

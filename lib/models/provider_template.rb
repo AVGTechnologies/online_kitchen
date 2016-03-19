@@ -1,4 +1,5 @@
 
+# Template configuration encapsulation with auxiliary functions
 class ProviderTemplate < Settingslogic
   source "#{OnlineKitchen.root}/config/templates.yml"
   namespace OnlineKitchen.env
@@ -13,7 +14,7 @@ class ProviderTemplate < Settingslogic
 
   def include_image?(image)
     templates.any? do |s|
-      parsed_cloud, parsed_image = s.split('.', 2)
+      _, parsed_image = s.split('.', 2)
       image == parsed_image
     end
   end

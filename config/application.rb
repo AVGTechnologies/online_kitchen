@@ -13,6 +13,7 @@ Bundler.require
 require 'online_kitchen'
 
 module OnlineKitchen
+  # Main rails application
   class Application < Rails::Application
     console do
       OnlineKitchen::Database.connect

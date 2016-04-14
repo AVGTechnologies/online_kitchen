@@ -27,7 +27,7 @@ gem 'settingslogic', '~> 2.0.9'
 if RUBY_PLATFORM =~ /win32|mingw32/
   gem 'thin'
 else
-  gem 'unicorn'
+  gem 'puma'
 end
 
 group :test, :development do

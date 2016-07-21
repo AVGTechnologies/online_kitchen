@@ -31,6 +31,7 @@ else
 end
 
 group :test, :development do
+  gem 'rubocop'
   gem 'rspec'
   gem 'factory_girl'
   gem 'database_cleaner'

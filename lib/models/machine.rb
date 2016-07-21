@@ -15,6 +15,7 @@
 #  cluster          :string
 #
 
+# Machine representation
 class Machine < ActiveRecord::Base
   belongs_to :configuration, inverse_of: :machines
 
@@ -22,7 +23,7 @@ class Machine < ActiveRecord::Base
             presence: true,
             length: { minimum: 3 },
             format: {
-              with: /\A[A-Za-z0-9_\. ()#\-<>:\|\\\[\]\/]+\z/,
+              with: %r{\A[A-Za-z0-9_\. ()#\-<>:\|\\\[\]\/]+\z},
               message: 'only allows alphanumeric, brackets and some more special characters'
             }
 
@@ -38,28 +39,28 @@ class Machine < ActiveRecord::Base
   strip_attributes except: :environment
 
   delegate :user, :folder_name, to: :configuration
-                           
-  scope :queued_older_than, ->(time) do
+
+  scope :queued_older_than, (lambda do |time|
     where(state: 'queued').where('updated_at < ?', time)
-  end
+  end)
 
-  scope :destroy_queued_older_than, ->(time) do
+  scope :destroy_queued_older_than, (lambda do |time|
     where(state: 'destroy_queued').where('updated_at < ?', time)
-  end
+  end)
 
-  scope :deleted_older_than, ->(time) do
+  scope :deleted_older_than, (lambda do |time|
     where(state: 'deleted').where('updated_at < ?', time)
-  end
+  end)
 
-  scope :destroy_queued_machines_without_provider_id, ->(time) do
+  scope :destroy_queued_machines_without_provider_id, (lambda do |time|
     where(state: 'destroy_queued')
       .where('(provider_id IS NULL) OR (provider_id = ?)', '')
       .where('updated_at < ?', time)
-  end
+  end)
 
-  scope :destroy_queued_machines_without_provider_id, ->(time) do
+  scope :destroy_queued_machines_without_provider_id, (lambda do |time|
     where(state: 'destroy_queued').where('updated_at < ?', time)
-  end
+  end)
 
   def as_json(options = {})
     h = super(options)
@@ -68,7 +69,7 @@ class Machine < ActiveRecord::Base
   end
 
   def template
-    '%s.%s' % [cluster, image]
+    "#{cluster}.#{image}"
   end
 
   def template=(value)
@@ -78,7 +79,7 @@ class Machine < ActiveRecord::Base
   end
 
   def job_id
-    '%d.%d' % [configuration.id, id]
+    "#{configuration.id}.#{id}"
   end
 
   def deleted?
@@ -126,17 +127,19 @@ class Machine < ActiveRecord::Base
   def environment_has_allowed_structure
     return if environment.nil?
 
-    unless Hash === environment
+    unless environment.is_a?(Hash)
       errors.add(:environment, 'has to be Hash (key-value) like structure')
       return false
     end
 
     environment.each do |key, value|
       unless key =~ /\A[A-Za-z][A-Za-z0-9_]*\z/
-        errors.add(:environment, 'keys has to be Literal (e.g. start on letter followed by letter, digits or underscore)')
+        errors.add(:environment,
+                   'keys has to be Literal ' \
+                   '(e.g. start on letter followed by letter, digits or underscore)')
         return false
       end
-      unless String === value
+      unless value.is_a?(String)
         errors.add(:environment, 'value has to be String')
         return false
       end

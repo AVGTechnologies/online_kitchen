@@ -11,10 +11,12 @@ describe 'Configurations' do
   end
 
   let!(:user) { FactoryGirl.create(:user, name: 'franta.lopata') }
-  let(:configuration) { {
-    name: 'machine.name',
-    template: ProviderTemplate.first
-  } }
+  let(:configuration) do
+    {
+      name: 'machine.name',
+      template: ProviderTemplate.first
+    }
+  end
 
   context 'no user specified' do
     let(:headers) do
@@ -72,9 +74,8 @@ describe 'Configurations' do
       context 'when user does not exist' do
         it 'creates the user' do
           response = get '/api/v1/configurations',
-            {},
-            headers.update(
-              'HTTP_USERNAME' => 'new_user')
+                         {},
+                         headers.update('HTTP_USERNAME' => 'new_user')
           expect(response.status).to eq 200
         end
       end
@@ -116,7 +117,10 @@ describe 'Configurations' do
           expect(response.status).to eq 200
 
           result = JSON.parse(response.body)
-          expect(result).to include('user_id' => user.id, 'name' => configuration.name, 'folder_name' => configuration.folder_name)
+          expect(result)
+            .to include('user_id' => user.id,
+                        'name' => configuration.name,
+                        'folder_name' => configuration.folder_name)
           expect(result['machines_attributes'].size).to eq 3
         end
 

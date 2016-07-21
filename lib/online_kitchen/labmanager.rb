@@ -24,6 +24,7 @@ require 'securerandom'
 require 'active_support/core_ext/object/blank'
 
 module OnlineKitchen
+  # LabManager communication encapsulation
   class LabManager
     attr_reader :vm
 
@@ -33,12 +34,13 @@ module OnlineKitchen
       end
 
       def release_machine(name)
-        response = client.call(:release_machine, message: { machine_name: name })
+        client.call(:release_machine, message: { machine_name: name })
       rescue Savon::SOAPFault => err # TODO: specify exceptions
         OnlineKitchen.logger.error "Release machine failed: #{err.inspect}, #{$ERROR_POSITION}"
         raise
       end
-      alias_method :destroy, :release_machine
+
+      alias destroy release_machine
 
       def client
         @client ||= Savon.client(client_config)
@@ -46,7 +48,8 @@ module OnlineKitchen
 
       def client_config
         soap_config = OnlineKitchen.config.soap_config
-        fail 'soap.service_endpoint must be specified in the config!' if soap_config[:service_endpoint].blank?
+        service_endpoint = soap_config[:service_endpoint]
+        raise 'soap.service_endpoint must be specified in the config!' if service_endpoint.blank?
         res = {
           env_namespace: :s,
           namespace_identifier: nil,
@@ -55,7 +58,7 @@ module OnlineKitchen
           read_timeout: 1600
         }.deep_merge(soap_config[:service_config].symbolize_keys)
         res[:wsdl] = soap_config[:service_endpoint]
-        res[:wsdl] << '?wsdl' unless res[:wsdl] =~ /\?wsdl\z/
+        res[:wsdl] << '?wsdl' unless res[:wsdl].end_with?('?wsdl')
         res
       end
     end
@@ -79,13 +82,14 @@ module OnlineKitchen
     end
 
     def provision_machine(opts = {})
-      response = client.call(:provision_machine, message: { specification: provision_machine_builder(opts).doc.root.to_s })
-      px = Nokogiri.parse(response.body[:provision_machine_response][:provision_machine_result])
-      ip = px.xpath('//IP').first.inner_html.to_s
-      name = px.xpath('//name').first.inner_html.to_s
+      response = client.call(:provision_machine,
+                             message:
+                             {
+                               specification: provision_machine_builder(opts).doc.root.to_s
+                             })
 
-      OnlineKitchen.logger.info "Got PC with IP: #{ip}, name: #{name}"
-      @vm = { name: name, ip: ip }
+      @vm = parse_vm(response.body[:provision_machine_response][:provision_machine_result])
+      OnlineKitchen.logger.info "Got PC with IP: #{@vm[:ip]}, name: #{@vm[:name]}"
       self
     rescue
       OnlineKitchen.logger.error "Deploy machine failed: #{$ERROR_INFO.inspect}, #{$ERROR_POSITION}"
@@ -108,10 +112,18 @@ module OnlineKitchen
           xml.folder opts[:vms_folder]
           xml.templateName opts[:image]
           xml.guid opts[:uuid] || SecureRandom.uuid
-          xml.requestorUserName (opts[:requestor])
+          xml.requestorUserName(opts[:requestor])
           xml.testId opts[:job_id]
         end
       end
+    end
+
+    def parse_vm(provision_machine_result)
+      px = Nokogiri.parse(provision_machine_result)
+      ip = px.xpath('//IP').first.inner_html.to_s
+      name = px.xpath('//name').first.inner_html.to_s
+
+      { name: name, ip: ip }
     end
   end
 end

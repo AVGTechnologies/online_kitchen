@@ -8,6 +8,7 @@
 #  updated_at :datetime         not null
 #
 
+# User representation
 class User < ActiveRecord::Base
   has_many :configurations, dependent: :destroy, inverse_of: :user
 

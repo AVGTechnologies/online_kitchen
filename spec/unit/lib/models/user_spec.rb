@@ -19,6 +19,11 @@ describe User do
       expect(subject.valid?).to be false
     end
 
+    it 'is at least 1 letter long' do
+      user.update(name: 'O') # Common Korean surname in 80's
+      expect(subject.valid?).to be true
+    end
+
     it 'can have UTF-8 characters' do
       pending 'support for this functionality not needed now'
       user.update(name: 'Zlatan Hrotič')

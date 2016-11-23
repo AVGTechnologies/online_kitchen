@@ -12,6 +12,10 @@ require 'active_support'
 OnlineKitchen.setup
 
 module OnlineKitchen
+  # Custom exception covering the case of user name failing validation criteria
+  class InvalidUserName < StandardError
+  end
+
   # Application class
   class App < Sinatra::Base
     register Sinatra::Namespace
@@ -124,6 +128,13 @@ module OnlineKitchen
       }.to_json
     end
 
+    error OnlineKitchen::InvalidUserName do
+      halt 400, {
+        message: 'User name is invalid',
+        errors: @user_name
+      }.to_json
+    end
+
     # FIXME: does not work
     error JSON::ParserError do
       halt 400, { message: 'Cannot parse JSON' }.to_json
@@ -132,6 +143,8 @@ module OnlineKitchen
     def current_user
       return nil unless @user_name
       @current_user ||= User.find_or_create_by(name: @user_name)
+      raise OnlineKitchen::InvalidUserName unless @current_user.valid?
+      @current_user
     end
 
     private

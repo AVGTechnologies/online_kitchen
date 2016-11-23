@@ -14,7 +14,7 @@ class User < ActiveRecord::Base
 
   validates :name,
             presence: true,
-            length: { minimum: 5 },
+            length: { minimum: 1 },
             uniqueness: { scope: :id },
             format: {
               with: /\A[[[:alnum:]]._\-\\]+\z/,

@@ -3,16 +3,44 @@ rvm:
   - "2.2.2"
   - "2.2.10"
   - "2.5.1"
+env:
+  matrix:
+    - OS_TYPE=centos OS_VERSION=7
+    - OS_TYPE=ubuntu
 
-sudo: false
+services:
+  - docker
+sudo: true
 cache: bundler
 
-before_script: |
-  cp config/database.yml.example config/database.yml
-  cp config/online_kitchen.yml.example config/online_kitchen.yml
-  cp config/templates.yml.example config/templates.yml
-  bundle exec rake db:create db:migrate
+before_install:
+  - if test "${OS_TYPE}" == 'centos' ; then sudo apt-get update; fi
+  - if test "${OS_TYPE}" == 'centos' ; then echo 'DOCKER_OPTS="-H tcp://127.0.0.1:2375 -H unix:///var/run/docker.sock -s devicemapper"' | sudo tee /etc/default/docker > /dev/null; fi
+  - if test "${OS_TYPE}" == 'centos' ; then sudo service docker restart; sleep 5; fi
+  - if test "${OS_TYPE}" == 'centos' ; then sudo docker pull centos:centos${OS_VERSION}; fi
+
+
+before_script:
+  - cp config/database.yml.example config/database.yml
+  - cp config/online_kitchen.yml.example config/online_kitchen.yml
+  - cp config/templates.yml.example config/templates.yml
+  - echo "set -e"      >./test_centos.sh
+  - echo "yum install which -y"         >>./test_centos.sh
+  - echo "curl -sSL https://rvm.io/mpapis.asc | gpg2 --import -">>./test_centos.sh
+  - echo "curl -sSL https://get.rvm.io | bash -s stable">>./test_centos.sh
+  - echo "source /etc/profile.d/rvm.sh" >>./test_centos.sh
+  - echo "env"         >>./test_centos.sh
+  - echo "rvm install ${RUBY_VERSION} --fuzzy"   >>./test_centos.sh
+  - echo "cd /test"    >>./test_centos.sh
+  - echo "bundle"      >>./test_centos.sh
+  - echo "RAILS_ENV=test bundle exec rake db:create db:migrate">>./test_centos.sh
+  - echo "bundle exec rubocop && bundle exec rspec">>./test_centos.sh
+  - echo "#end of file">>./test_centos.sh
 
 script:
-  - bundle exec rubocop
-  - bundle exec rspec
+  - if test "${OS_TYPE}" == 'centos' ; then sudo docker run -v `pwd`:/test -t centos:centos7 bash /test/test_centos.sh; fi
+  - if test "${OS_TYPE}" == 'ubuntu' ; then RAILS_ENV=test bundle exec rake db:create db:migrate; fi
+  - if test "${OS_TYPE}" == 'ubuntu' ; then bundle exec rubocop; fi
+  - if test "${OS_TYPE}" == 'ubuntu' ; then bundle exec rspec;  fi
+
+

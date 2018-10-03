@@ -1,23 +1,6 @@
-# = Wrapper for Online Kitchen SOAP service
+# Wrapper for 4th generation of vCenter LabManager Unit 
 #
-# This library is an interface for Online Kitchen service which is an interface
-# for creating and destroing virtual machines (currently only VMware vsphere)
-#
-# == Example
-#
-# lm = OnlineKitchen::LabManager.create(
-#   vms_folder: 'myFolder',
-#   template_name: 'w7x64',
-#   requestor: 'CZ\\user.name',
-#   uuid: ...,
-#   job_id: ...
-# )
-# p lm.ip
-# lm.destroy
-# ...
-#
-# # destroy machine by name
-# OnlineKitchen::LabManager.destroy('online_kitchen_8x64-5e448e10')
+# This service has REST interface for vmWare machine management.
 #
 
 require 'securerandom'

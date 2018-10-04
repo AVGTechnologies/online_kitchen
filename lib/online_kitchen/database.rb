@@ -3,7 +3,7 @@ module OnlineKitchen
   module Database
     class << self
       def config
-        YAML.load(File.read(File.join(OnlineKitchen.root, 'config', 'database.yml')))
+        YAML.safe_load(File.read(File.join(OnlineKitchen.root, 'config', 'database.yml')))
       end
 
       def connect

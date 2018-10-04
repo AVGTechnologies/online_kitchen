@@ -89,7 +89,7 @@ describe 'LabManager' do
 
         subject.provision_machine(provision_specs)
         subject.destroy
-        expect(subject.vm).to be {}
+        expect(subject.vm).to(be {})
       end
     end
   end

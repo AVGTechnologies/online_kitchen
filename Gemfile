@@ -1,21 +1,24 @@
 source 'https://rubygems.org'
 
-gem 'rails', require: nil
-gem 'activerecord'
-gem 'sqlite3'
-gem 'sidekiq'
-
-gem 'sentry-raven' # ,    github: 'getsentry/raven-ruby'
-gem 'metriks'
-
-gem 'nokogiri', '~> 1.6.6'
-gem 'savon', '~> 2.11'
+gem 'activerecord', '~>4.2.8'
 
 gem 'annotate', '~> 2.6.6'
 
+gem 'rails', '~>4.2.8', require: nil
+
+gem 'sqlite3'
+
+gem 'sidekiq', '3.3.4'
+
+gem 'metriks'
+
+gem 'nokogiri', '~> 1.8.2'
+gem 'savon', '~> 2.11'
+gem 'sentry-raven' # ,    github: 'getsentry/raven-ruby'
+
 gem 'strip_attributes', '~> 1.7.0'
 
-gem 'rack'
+gem 'rack', '~>1.6.2'
 gem 'rack-contrib'
 gem 'sinatra', '~> 1.4.6', require: 'sinatra/base' # see https://github.com/resque/resque/issues/934
 gem 'sinatra-contrib', '~> 1.4.4'
@@ -31,8 +34,8 @@ else
 end
 
 group :test, :development do
-  gem 'rubocop'
-  gem 'rspec'
-  gem 'factory_girl'
   gem 'database_cleaner'
+  gem 'factory_girl'
+  gem 'rspec'
+  gem 'rubocop', '~> 0.49.0'
 end

@@ -56,7 +56,7 @@ module OnlineKitchen
       ::Raven.configure do |config|
         config.dsn = OnlineKitchen.config.sentry_dsn
         config.current_environment = OnlineKitchen.env
-        config.excluded_exceptions = %w(Sinatra::NotFound)
+        config.excluded_exceptions = %w[Sinatra::NotFound]
       end
     end
 

@@ -165,7 +165,7 @@ module OnlineKitchen
       value = env[variable]
 
       return nil if value.nil?
-      value.casecmp('null') == 0 ? nil : value
+      value.casecmp('null').zero? ? nil : value
     end
 
     # This makes the app launchanble like "ruby app.rb"

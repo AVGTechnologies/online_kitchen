@@ -96,7 +96,7 @@ describe 'Configurations' do
           response = get '/api/v1/configurations', {}, headers
           expect(response.status).to eq 200
           configurations = JSON.parse(response.body)
-          expect(configurations).to eq [JSON.load(configuration.to_json)]
+          expect(configurations).to eq [JSON.parse(configuration.to_json)]
         end
       end
     end
@@ -156,7 +156,7 @@ describe 'Configurations' do
           machine_states = result['configuration']['machines_attributes'].map do |m|
             m['state']
           end.sort
-          expect(machine_states).to eq %w(destroy_queued queued queued)
+          expect(machine_states).to eq %w[destroy_queued queued queued]
         end.to change { OnlineKitchen::LabManagerRelease.jobs.size }.by(1)
       end
 
@@ -199,7 +199,7 @@ describe 'Configurations' do
           machine_states = result['configuration']['machines_attributes'].map do |m|
             m['state']
           end
-          expect(machine_states).to eq %w(queued queued)
+          expect(machine_states).to eq %w[queued queued]
         end.to change { OnlineKitchen::LabManagerProvision.jobs.size }.by(2)
       end
     end
@@ -216,7 +216,7 @@ describe 'Configurations' do
             machine_states = result['configuration']['machines_attributes'].map do |m|
               m['state']
             end
-            expect(machine_states).to eq %w(destroy_queued destroy_queued destroy_queued)
+            expect(machine_states).to eq %w[destroy_queued destroy_queued destroy_queued]
           end.to change { OnlineKitchen::LabManagerRelease.jobs.size }.by(3)
           configuration.reload
           expect(configuration.deleted).to eq true

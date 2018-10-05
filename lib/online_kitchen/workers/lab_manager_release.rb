@@ -39,7 +39,7 @@ module OnlineKitchen
         machine.update_attributes(state: :deleted)
         configuration = machine.configuration
         machine.destroy!
-        configuration.schedule_destroy if configuration.machines.count == 0
+        configuration.schedule_destroy if configuration.machines.count.zero?
       end
       OnlineKitchen.logger.info "Machine id:#{machine_id} destroyed in #{time.round(2)} seconds."
       Metriks.timer('online_kitchen.worker.release').update(time)

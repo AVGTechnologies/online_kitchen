@@ -1,6 +1,8 @@
 language: ruby
 rvm:
   - "2.2.2"
+  - "2.2.10"
+  - "2.5.1"
 
 sudo: false
 cache: bundler
@@ -9,7 +11,7 @@ before_script: |
   cp config/database.yml.example config/database.yml
   cp config/online_kitchen.yml.example config/online_kitchen.yml
   cp config/templates.yml.example config/templates.yml
-  rake db:create db:migrate
+  bundle exec rake db:create db:migrate
 
 script:
   - bundle exec rubocop

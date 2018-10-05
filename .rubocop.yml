@@ -7,6 +7,9 @@ AllCops:
 Style/EndOfLine:
   Enabled: false
 
+Style/GuardClause:
+  Enabled: false
+
 Metrics/MethodLength:
   Max: 25
 
@@ -24,3 +27,8 @@ Metrics/LineLength:
 
 Metrics/ClassLength:
   Max: 150
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*.rb'
+    - 'app.rb'

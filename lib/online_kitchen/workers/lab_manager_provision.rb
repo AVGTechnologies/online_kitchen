@@ -14,6 +14,7 @@ module OnlineKitchen
       return if machine.state == 'destroy_queued'
 
       provision(machine)
+      OnlineKitchen.logger.info "Machine id:#{machine_id} provisioned."
     rescue ActiveRecord::RecordNotFound
       OnlineKitchen.logger.error "Provision machine: record not found id: #{machine_id}"
       Metriks.meter('online_kitchen.worker.provision.error').mark
@@ -37,7 +38,7 @@ module OnlineKitchen
 
     def provision(machine)
       time = Benchmark.realtime do
-        vm = OnlineKitchen::LabManager.create(builder(machine))
+        vm = OnlineKitchen::LabManager4.create(builder(machine))
         machine.reload # labmanager takes too long, model could be changed
 
         machine.ip = vm.ip
@@ -46,7 +47,6 @@ module OnlineKitchen
         machine.save!
       end
       Metriks.timer('online_kitchen.worker.provision').update(time)
-      OnlineKitchen.logger.info "Machine id:#{machine_id} provisioned."
     end
   end
 end

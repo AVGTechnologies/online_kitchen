@@ -17,7 +17,7 @@ Style/BlockComments:
   Enabled: false
 
 Metrics/AbcSize:
-  Max: 23
+  Max: 25
 
 Style/RescueModifier:
   Enabled: false

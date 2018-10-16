@@ -12,7 +12,7 @@ describe 'LabManagerRelease' do
 
   it 'releases configuration once last machine is dropped' do
     expect(configuration_in_ready_state).to receive(:schedule_destroy).once
-    allow(OnlineKitchen::LabManager).to receive(:destroy)
+    allow(OnlineKitchen::LabManager4).to receive(:destroy)
     allow(Machine).to receive(:find).and_return(machine_in_ready_state)
 
     subject.perform(machine_in_ready_state.id)

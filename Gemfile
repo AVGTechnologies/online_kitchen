@@ -6,9 +6,11 @@ gem 'annotate', '~> 2.6.6'
 
 gem 'rails', '~>4.2.10', require: nil
 
+gem 'redis-namespace', '1.5.2'
+
 gem 'sqlite3'
 
-gem 'sidekiq', '3.3.4'
+gem 'sidekiq', '4.1.4'
 
 gem 'metriks'
 

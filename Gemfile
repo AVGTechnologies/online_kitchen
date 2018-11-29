@@ -10,6 +10,8 @@ gem 'redis-namespace', '1.5.2'
 
 gem 'sqlite3'
 
+gem 'pg', '~>0.15'
+
 gem 'sidekiq', '4.1.4'
 
 gem 'metriks'

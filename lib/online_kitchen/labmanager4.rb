@@ -113,12 +113,13 @@ module OnlineKitchen
       end
     end
 
-    def deploy_machine(config, image)
+    def deploy_machine(config, vm_options)
       uri_create = URI("#{config[:service_endpoint]}machines/")
       req1 = Net::HTTP::Post.new(uri_create)
       req1.content_type = 'application/json'
-      req1.body = "{\"labels\":[\"template:#{image}\", \
-                  \"config:networkInterface=#{config[:network_interface]}\"]}"
+      req1.body = "{\"labels\":[\"template:#{vm_options[:image]}\", \
+                  \"config:network_interface=#{config[:network_interface]}\", \
+                  \"config:inventory_path=#{vm_options[:requestor]}/#{vm_options[:vms_folder]}\"]}"
       req1.basic_auth config[:username], config[:password]
       res = Net::HTTP.start(uri_create.hostname, uri_create.port) do |http|
         http.request(req1)
@@ -150,7 +151,7 @@ module OnlineKitchen
     def provision_machine(opts = {})
       config = OnlineKitchen.config.rest_config
 
-      request_id = deploy_machine(config, opts[:image])
+      request_id = deploy_machine(config, opts)
       machine_id = get_machine_id(config, request_id)
       wait_for_machine_deployed(config, machine_id)
       start_machine(config, machine_id)

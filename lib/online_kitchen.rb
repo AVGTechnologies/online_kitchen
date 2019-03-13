@@ -20,7 +20,7 @@ module OnlineKitchen
     end
 
     def logger
-      @logger ||= Logger.new("#{root}/log/#{env}.log")
+      @logger ||= Logger.new(STDOUT)
     end
 
     def root

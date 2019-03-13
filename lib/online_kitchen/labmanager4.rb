@@ -119,7 +119,7 @@ module OnlineKitchen
       req1.content_type = 'application/json'
       req1.body = "{\"labels\":[\"template:#{vm_options[:image]}\", \
                   \"config:network_interface=#{config[:network_interface]}\", \
-                  \"config:inventory_path=#{vm_options[:requestor]}/#{vm_options[:vms_folder]}\"]}"
+                  \"config:inventory_path=#{vm_options[:requestor]}\"]}"
       req1.basic_auth config[:username], config[:password]
       res = Net::HTTP.start(uri_create.hostname, uri_create.port) do |http|
         http.request(req1)

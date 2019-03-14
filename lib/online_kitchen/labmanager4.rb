@@ -32,10 +32,40 @@ module OnlineKitchen
           JSON.parse(response.body)['request_id']
         end
 
-        OnlineKitchen.logger.debug(request_id)
+        wait_for_machine_released(config, request_id)
       end
 
       alias destroy release_machine
+
+      private
+
+      def get_response(config, uri_get_request)
+        Net::HTTP.start(uri_get_request.host, uri_get_request.port) do |http|
+          request = Net::HTTP::Get.new uri_get_request
+          request.basic_auth config[:username], config[:password]
+
+          response = http.request request # Net::HTTPResponse object
+          JSON.parse(response.body)
+        end
+      end
+
+      def wait_for_machine_released(config, request_id)
+        uri_get_request = URI("#{config[:service_endpoint]}requests/#{request_id}")
+
+        config[:max_request_retries].times.each do
+          response = get_response(config, uri_get_request)
+
+          begin
+            return response if response['responses'][0]['result']['state'] == 'success'
+          rescue NoMethodError
+            OnlineKitchen.logger.debug("response: #{response.body} cannot be examined")
+          end
+
+          sleep(Random.new.rand(config[:try_delay_min]..config[:try_delay_max]))
+        end
+
+        raise 'Error machine deletion waiting'
+      end
     end
 
     def initialize

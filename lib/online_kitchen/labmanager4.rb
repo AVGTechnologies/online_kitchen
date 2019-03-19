@@ -9,6 +9,12 @@ require 'json'
 require 'active_support/core_ext/object/blank'
 
 module OnlineKitchen
+  class DeployError < StandardError
+  end
+
+  class IPsError < StandardError
+  end
+
   # LabManager communication encapsulation
   class LabManager4
     attr_reader :vm
@@ -29,7 +35,7 @@ module OnlineKitchen
 
           response = http.request request # Net::HTTPResponse object
           OnlineKitchen.logger.debug(response.body)
-          JSON.parse(response.body)['request_id']
+          JSON.parse(response.body)['responses'][0]['request_id']
         end
 
         wait_for_machine_released(config, request_id)
@@ -104,18 +110,18 @@ module OnlineKitchen
           JSON.parse(response.body)
         end
 
-        return machine if machine['state'] == 'deployed'
+        return machine if machine['responses'][0]['result']['state'] == 'deployed'
 
         sleep_between_tries(config)
       end
 
-      raise 'Error machine waiting'
+      raise DeployError, 'Error machine waiting'
     end
 
     def wait_for_machine_ips(config, machine_id)
       uri_get_machine = URI("#{config[:service_endpoint]}machines/#{machine_id}")
 
-      config[:max_request_retries].times.each do
+      (config[:max_request_retries] / 8).ceil.times.each do
         machine = Net::HTTP.start(uri_get_machine.host, uri_get_machine.port) do |http|
           request = Net::HTTP::Get.new uri_get_machine
           request.basic_auth config[:username], config[:password]
@@ -124,12 +130,13 @@ module OnlineKitchen
           JSON.parse(response.body)
         end
 
-        return machine['ip_addresses'] if machine['ip_addresses'] != []
+        return machine['responses'][0]['result']['ip_addresses'] if
+          machine['responses'][0]['result']['ip_addresses'] != []
 
         sleep_between_tries(config)
       end
 
-      raise 'Error machine waiting'
+      raise IPsError, "Error machine #{machine_id} waiting"
     end
 
     def start_machine(config, machine_id)
@@ -155,7 +162,7 @@ module OnlineKitchen
         http.request(req1)
       end
 
-      request_id = JSON.parse(res.body)['request_id']
+      request_id = JSON.parse(res.body)['responses'][0]['request_id']
       OnlineKitchen.logger.debug("post_request_id: #{request_id}")
       request_id
     end
@@ -188,6 +195,11 @@ module OnlineKitchen
       ips = wait_for_machine_ips(config, machine_id)
 
       @vm = { name: "#{opts[:image]}-#{machine_id}", ip: ips.join(', ') }
+
+      OnlineKitchen.logger.info "Got PC with IP: #{@vm[:ip]}, name: #{@vm[:name]}"
+      self
+    rescue IPsError
+      @vm = { name: "#{opts[:image]}-#{machine_id}", ip: 'not obtained' }
 
       OnlineKitchen.logger.info "Got PC with IP: #{@vm[:ip]}, name: #{@vm[:name]}"
       self

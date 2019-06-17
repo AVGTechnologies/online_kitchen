@@ -111,7 +111,6 @@ module OnlineKitchen
         end
 
         return machine if machine['responses'][0]['result']['state'] == 'deployed'
-
         sleep_between_tries(config)
       end
 
@@ -185,6 +184,14 @@ module OnlineKitchen
       machine_id
     end
 
+    def get_machine_name(machine_id, opts = {})
+      if OnlineKitchen.config.rest_config[:unit_id]
+        "#{opts[:image]}-#{OnlineKitchen.config.rest_config[:unit_id]}-#{machine_id}"
+      else
+        "#{opts[:image]}-#{machine_id}"
+      end
+    end
+
     def provision_machine(opts = {})
       config = OnlineKitchen.config.rest_config
 
@@ -194,13 +201,11 @@ module OnlineKitchen
       start_machine(config, machine_id)
       ips = wait_for_machine_ips(config, machine_id)
 
-      @vm = { name: "#{opts[:image]}-#{machine_id}", ip: ips.join(', ') }
-
+      @vm = { name: get_machine_name(machine_id, opts), ip: ips.join(', ') }
       OnlineKitchen.logger.info "Got PC with IP: #{@vm[:ip]}, name: #{@vm[:name]}"
       self
     rescue IPsError
-      @vm = { name: "#{opts[:image]}-#{machine_id}", ip: 'not obtained' }
-
+      @vm = { name: get_machine_name(machine_id, opts), ip: 'not obtained' }
       OnlineKitchen.logger.info "Got PC with IP: #{@vm[:ip]}, name: #{@vm[:name]}"
       self
     rescue

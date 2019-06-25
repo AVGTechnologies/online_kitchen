@@ -23,6 +23,10 @@ module OnlineKitchen
       OnlineKitchen.logger.error "Provision machine id: #{machine_id}, soap error: #{err}"
       Metriks.meter('online_kitchen.worker.provision.error').mark
       raise
+    rescue PG::UnableToSend => exception
+      ::Raven.capture_exception(exception)
+      OnlineKitchen.logger.warn("PG::UnableToSend occurred, job: #{machine_id} re-enqueued")
+      self.class.perform_in(rand(5..12).seconds, machine_id)
     end
 
     private

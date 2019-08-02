@@ -1,16 +1,16 @@
 source 'https://rubygems.org'
 
-gem 'activerecord', '~>4.2.10'
+gem 'activerecord', '~>4.2.11.1'
 
 gem 'annotate', '~> 2.6.6'
 
-gem 'rails', '~>4.2.10', require: nil
+gem 'rails', '~>4.2.11.1', require: nil
 
 gem 'redis-namespace', '1.5.2'
 
 gem 'sqlite3'
 
-gem 'pg', '~>0.15'
+gem 'pg', '~>0.21'
 
 gem 'sidekiq', '4.1.4'
 

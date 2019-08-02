@@ -62,6 +62,7 @@ class Configuration < ActiveRecord::Base
 
   def destroy
     return super if destroyable?
+
     self
   end
 
@@ -84,6 +85,7 @@ class Configuration < ActiveRecord::Base
 
   def destroyable?
     return true if machines.all?(&:deleted?)
+
     errors.add(:base, 'Cannot delete configuration with living machines')
     false
   end

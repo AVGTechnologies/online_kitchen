@@ -6,13 +6,14 @@ gem 'annotate', '~> 2.6.6'
 
 gem 'rails', '~>4.2.11.1', require: nil
 
-gem 'redis-namespace', '1.5.2'
+gem 'redis', '4.1.2'
+gem 'redis-namespace', '1.6.0'
 
 gem 'sqlite3'
 
 gem 'pg', '~>0.21'
 
-gem 'sidekiq', '4.1.4'
+gem 'sidekiq', '5.2.7'
 
 gem 'metriks'
 
@@ -41,5 +42,5 @@ group :test, :development do
   gem 'database_cleaner'
   gem 'factory_girl'
   gem 'rspec'
-  gem 'rubocop', '~> 0.49.0'
+  gem 'rubocop', '~> 0.74.0'
 end

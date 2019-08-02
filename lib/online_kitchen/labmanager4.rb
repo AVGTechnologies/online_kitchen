@@ -111,6 +111,7 @@ module OnlineKitchen
         end
 
         return machine if machine['responses'][0]['result']['state'] == 'deployed'
+
         sleep_between_tries(config)
       end
 
@@ -208,7 +209,7 @@ module OnlineKitchen
       @vm = { name: get_machine_name(machine_id, opts), ip: 'not obtained' }
       OnlineKitchen.logger.info "Got PC with IP: #{@vm[:ip]}, name: #{@vm[:name]}"
       self
-    rescue
+    rescue StandardError
       OnlineKitchen.logger.error "Deploy machine failed: #{$ERROR_INFO.inspect}, #{$ERROR_POSITION}"
       raise
     end

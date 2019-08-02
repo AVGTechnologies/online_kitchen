@@ -1,4 +1,3 @@
-
 # Template configuration encapsulation with auxiliary functions
 class ProviderTemplate < Settingslogic
   source "#{OnlineKitchen.root}/config/templates.yml"

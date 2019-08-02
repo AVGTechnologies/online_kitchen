@@ -19,12 +19,12 @@ module OnlineKitchen
       OnlineKitchen.logger.error "Provision machine: record not found id: #{machine_id}"
       Metriks.meter('online_kitchen.worker.provision.error').mark
       raise
-    rescue Savon::SOAPFault => err
-      OnlineKitchen.logger.error "Provision machine id: #{machine_id}, soap error: #{err}"
+    rescue Savon::SOAPFault => e
+      OnlineKitchen.logger.error "Provision machine id: #{machine_id}, soap error: #{e}"
       Metriks.meter('online_kitchen.worker.provision.error').mark
       raise
-    rescue PG::UnableToSend => exception
-      ::Raven.capture_exception(exception)
+    rescue PG::UnableToSend => e
+      ::Raven.capture_exception(e)
       OnlineKitchen.logger.warn("PG::UnableToSend occurred, job: #{machine_id} re-enqueued")
       self.class.perform_in(rand(5..12).seconds, machine_id)
     end

@@ -142,8 +142,10 @@ module OnlineKitchen
 
     def current_user
       return nil unless @user_name
+
       @current_user ||= User.find_or_create_by(name: @user_name)
       raise OnlineKitchen::InvalidUserName unless @current_user.valid?
+
       @current_user
     end
 
@@ -165,6 +167,7 @@ module OnlineKitchen
       value = env[variable]
 
       return nil if value.nil?
+
       value.casecmp('null').zero? ? nil : value
     end
 

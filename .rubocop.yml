@@ -2,9 +2,10 @@ AllCops:
   Exclude:
     - 'db/schema.rb' # generated file
     - 'vendor/**/*' # need for travis-ci
+    - 'Rakefile'
     # http://caseywest.com/faster-ci-on-travis-and-docker-for-ruby-and-rails-and-rubocop/
 
-Style/EndOfLine:
+Layout/EndOfLine:
   Enabled: false
 
 Style/GuardClause:
@@ -32,3 +33,18 @@ Metrics/BlockLength:
   Exclude:
     - 'spec/**/*.rb'
     - 'app.rb'
+
+Style/NumericPredicate:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/ExpandPathArguments:
+  Enabled: false
+
+Performance/RegexpMatch:
+  Exclude:
+    - 'lib/models/machine.rb'
+    - 'Gemfile'
+

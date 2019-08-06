@@ -18,11 +18,11 @@ module OnlineKitchen
     rescue ActiveRecord::RecordNotFound
       OnlineKitchen.logger.error "Release machine: record not found id:#{machine_id}"
       Metriks.meter('online_kitchen.worker.release.error').mark
-    rescue Savon::SOAPFault => err
-      OnlineKitchen.logger.error "Release machine id:#{machine_id}, soap error: #{err}"
+    rescue Savon::SOAPFault => e
+      OnlineKitchen.logger.error "Release machine id:#{machine_id}, soap error: #{e}"
       Metriks.meter('online_kitchen.worker.release.error').mark
-    rescue PG::UnableToSend => exception
-      ::Raven.capture_exception(exception)
+    rescue PG::UnableToSend => e
+      ::Raven.capture_exception(e)
       OnlineKitchen.logger.warn("PG::UnableToSend occurred, job: #{machine_id} re-enqueued")
       self.class.perform_in(rand(5..12).seconds, machine_id)
     end

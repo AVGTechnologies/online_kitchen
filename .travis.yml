@@ -1,11 +1,12 @@
 language: ruby
 rvm:
-  - "2.2.2"
-  - "2.2.10"
+  #  - "2.2.2"
+  #  - "2.2.10"
   - "2.5.1"
+  - "2.6.3"
 env:
   matrix:
-    - OS_TYPE=centos OS_VERSION=7
+    # - OS_TYPE=centos OS_VERSION=7#tests on centos disabled
     - OS_TYPE=ubuntu
 
 matrix:

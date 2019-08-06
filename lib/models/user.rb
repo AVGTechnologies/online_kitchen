@@ -31,6 +31,7 @@ class User < ActiveRecord::Base
 
   def destroyable?
     return true if configurations.where(deleted: false).count.zero?
+
     errors.add(:base, 'Cannot delete user with running configuration')
     false
   end

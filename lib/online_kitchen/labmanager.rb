@@ -35,8 +35,8 @@ module OnlineKitchen
 
       def release_machine(name)
         client.call(:release_machine, message: { machine_name: name })
-      rescue Savon::SOAPFault => err # TODO: specify exceptions
-        OnlineKitchen.logger.error "Release machine failed: #{err.inspect}, #{$ERROR_POSITION}"
+      rescue Savon::SOAPFault => e # TODO: specify exceptions
+        OnlineKitchen.logger.error "Release machine failed: #{e.inspect}, #{$ERROR_POSITION}"
         raise
       end
 
@@ -50,6 +50,7 @@ module OnlineKitchen
         soap_config = OnlineKitchen.config.soap_config
         service_endpoint = soap_config[:service_endpoint]
         raise 'soap.service_endpoint must be specified in the config!' if service_endpoint.blank?
+
         res = {
           env_namespace: :s,
           namespace_identifier: nil,
@@ -91,7 +92,7 @@ module OnlineKitchen
       @vm = parse_vm(response.body[:provision_machine_response][:provision_machine_result])
       OnlineKitchen.logger.info "Got PC with IP: #{@vm[:ip]}, name: #{@vm[:name]}"
       self
-    rescue
+    rescue StandardError
       OnlineKitchen.logger.error "Deploy machine failed: #{$ERROR_INFO.inspect}, #{$ERROR_POSITION}"
       raise
     end

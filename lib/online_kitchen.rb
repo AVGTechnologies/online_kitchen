@@ -79,6 +79,7 @@ module OnlineKitchen
 
   require 'online_kitchen/labmanager'
   require 'online_kitchen/labmanager4'
-  require 'online_kitchen/workers/lab_manager_provision'
+  require 'online_kitchen/workers/lab_manager_equip'
+  require 'online_kitchen/workers/lab_manager_deploy'
   require 'online_kitchen/workers/lab_manager_release'
 end

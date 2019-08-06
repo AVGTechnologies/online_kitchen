@@ -43,6 +43,12 @@ Style/FrozenStringLiteralComment:
 Style/ExpandPathArguments:
   Enabled: false
 
+Style/DoubleNegation:
+  Enabled: false
+
+Style/UnlessElse:
+  Enabled: false
+
 Performance/RegexpMatch:
   Exclude:
     - 'lib/models/machine.rb'

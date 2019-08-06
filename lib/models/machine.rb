@@ -27,7 +27,7 @@ class Machine < ActiveRecord::Base
               message: 'only allows alphanumeric, brackets and some more special characters'
             }
 
-  validates :state, inclusion: { in: %w[queued ready destroy_queued deleted] }
+  validates :state, inclusion: { in: %w[queued deployed ready destroy_queued deleted] }
   validates :provider_id, presence: true, if:  ->(s) { s.state == 'ready' }
   validate :environment_has_allowed_structure
   validate :image_is_valid
@@ -121,7 +121,7 @@ class Machine < ActiveRecord::Base
 
   def schedule_provision_vm
     OnlineKitchen.logger.info "Scheduling provision for machine: #{id}"
-    OnlineKitchen::LabManagerProvision.perform_async(id)
+    OnlineKitchen::LabManagerDeploy.perform_async('machine_id' => id, 'deployed' => false)
   end
 
   def environment_has_allowed_structure

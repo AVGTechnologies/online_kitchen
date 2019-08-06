@@ -30,6 +30,10 @@ default: &defaults
     max_request_retries: 50
     try_delay_min: 6
     try_delay_max: 6
+    http_opts:
+      open_timeout: 10
+      read_timeout: 5
+      write_timeout: 5
   redis:
     url: redis://localhost:6379/0
     namespace: online_kitchen

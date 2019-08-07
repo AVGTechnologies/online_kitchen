@@ -173,7 +173,7 @@ describe 'Configurations' do
         expect do
           response = put "/api/v1/configurations/#{configuration.id}", payload, headers
           expect(response.status).to eq 200
-        end.to change { OnlineKitchen::LabManagerProvision.jobs.size }.by(1)
+        end.to change { OnlineKitchen::LabManagerDeploy.jobs.size }.by(1)
       end
     end
 
@@ -200,7 +200,7 @@ describe 'Configurations' do
             m['state']
           end
           expect(machine_states).to eq %w[queued queued]
-        end.to change { OnlineKitchen::LabManagerProvision.jobs.size }.by(2)
+        end.to change { OnlineKitchen::LabManagerDeploy.jobs.size }.by(2)
       end
     end
 

@@ -1,5 +1,4 @@
 require 'benchmark'
-require 'online_kitchen/workers/lab_manager_provision'
 
 module OnlineKitchen
   # Releases machine via labManager

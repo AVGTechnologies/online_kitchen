@@ -26,7 +26,7 @@ module OnlineKitchen
         request_id = Net::HTTP.start(
           uri_del_machine.host,
           uri_del_machine.port,
-          config.http_opts
+          config.http_opts.symbolize_keys
         ) do |http|
           request = Net::HTTP::Delete.new uri_del_machine
           request.basic_auth config[:username], config[:password]
@@ -47,7 +47,7 @@ module OnlineKitchen
         machine = Net::HTTP.start(
           uri_get_machine.host,
           uri_get_machine.port,
-          config.http_opts
+          config.http_opts.symbolize_keys
         ) do |http|
           request = Net::HTTP::Get.new uri_get_machine
           request.basic_auth config[:username], config[:password]
@@ -70,7 +70,7 @@ module OnlineKitchen
         req1.content_type = 'application/json'
         req1.body = '{"action":"start"}'
         req1.basic_auth config[:username], config[:password]
-        Net::HTTP.start(uri.hostname, uri.port, config.http_opts) do |http|
+        Net::HTTP.start(uri.hostname, uri.port, config.http_opts.symbolize_keys) do |http|
           http.request(req1)
         end
       end
@@ -83,7 +83,7 @@ module OnlineKitchen
         machine = Net::HTTP.start(
           uri_get_machine.host,
           uri_get_machine.port,
-          config.http_opts
+          config.http_opts.symbolize_keys
         ) do |http|
           request = Net::HTTP::Get.new uri_get_machine
           request.basic_auth config[:username], config[:password]
@@ -102,7 +102,7 @@ module OnlineKitchen
       private
 
       def get_response(config, uri_get_request)
-        Net::HTTP.start(uri_get_request.host, uri_get_request.port) do |http|
+        Net::HTTP.start(uri_get_request.host, uri_get_request.port, config.http_opts.symbolize_keys) do |http|
           request = Net::HTTP::Get.new uri_get_request
           request.basic_auth config[:username], config[:password]
 
@@ -160,7 +160,7 @@ module OnlineKitchen
       res = Net::HTTP.start(
         uri_create.hostname,
         uri_create.port,
-        OnlineKitchen.config.rest_config.http_opts
+        OnlineKitchen.config.rest_config.http_opts.symbolize_keys
       ) do |http|
         http.request(req1)
       end
@@ -176,7 +176,7 @@ module OnlineKitchen
       machine_id = Net::HTTP.start(
         uri_get_machine_id.host,
         uri_get_machine_id.port,
-        OnlineKitchen.config.rest_config.http_opts
+        OnlineKitchen.config.rest_config.http_opts.symbolize_keys
       ) do |http|
         request = Net::HTTP::Get.new uri_get_machine_id
         request.basic_auth config[:username], config[:password]

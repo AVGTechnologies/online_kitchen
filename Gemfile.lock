@@ -79,18 +79,20 @@ GEM
       avl_tree (~> 1.2.0)
       hitimes (~> 1.1)
     mini_mime (1.0.2)
-    mini_portile2 (2.3.0)
+    mini_portile2 (2.5.1)
     minitest (5.11.3)
     multi_json (1.13.1)
     multipart-post (2.0.0)
-    nokogiri (1.8.5)
-      mini_portile2 (~> 2.3.0)
+    nokogiri (1.11.4)
+      mini_portile2 (~> 2.5.0)
+      racc (~> 1.4)
     nori (2.6.0)
     parallel (1.17.0)
     parser (2.6.3.0)
       ast (~> 2.4.0)
     pg (0.21.0)
     puma (3.12.0)
+    racc (1.5.2)
     rack (1.6.11)
     rack-contrib (1.8.0)
       rack (~> 1.4)
@@ -206,7 +208,7 @@ DEPENDENCIES
   database_cleaner
   factory_girl
   metriks
-  nokogiri (~> 1.8.2)
+  nokogiri (~> 1.11.4)
   pg (~> 0.21)
   puma
   rack (~> 1.6.2)

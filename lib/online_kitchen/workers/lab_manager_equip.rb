@@ -15,6 +15,11 @@ module OnlineKitchen
       machine = Machine.find(machine_id)
       return unless machine_processable?(machine)
 
+      unless equip_arg['snapshoted']
+        perform_create_clean_snapshot(machine, equip_arg)
+        return
+      end
+
       unless equip_arg['started']
         perform_start(machine, equip_arg)
         return
@@ -33,6 +38,12 @@ module OnlineKitchen
       ::Raven.capture_exception(e)
       OnlineKitchen.logger.warn("PG::UnableToSend occurred, job: #{equip_arg} re-enqueued")
       self.class.perform_in(rand(5..12).seconds, equip_arg)
+    rescue Exception => e
+      ::Raven.capture_exception(e)
+      OnlineKitchen.logger.warn(
+        "General exception occurred, job: #{equip_arg}, exc: #{e.class}, mess: #{e.message}"
+      )
+      raise
     end
 
     private
@@ -69,8 +80,23 @@ module OnlineKitchen
     def perform_start(machine, equip_arg)
       OnlineKitchen::LabManager4.equip_machine_start(machine.provider_id)
       self.class.perform_in(
-        rand(3..10).seconds,
+        rand(2..7).seconds,
         equip_arg.merge('started' => true)
+      )
+    end
+
+    def perform_create_clean_snapshot(machine, equip_arg)
+      OnlineKitchen::LabManager4.equip_create_clean_snapshot(machine.provider_id)
+    rescue Exception => e
+      ::Raven.capture_exception(e)
+      OnlineKitchen.logger.warn(
+        "clean snapshot not created, job: #{equip_arg}, exc: #{e.class}, mess: #{e.message}"
+      )
+      raise
+    ensure
+      self.class.perform_in(
+        rand(2..5).seconds,
+        equip_arg.merge('snapshoted' => true)
       )
     end
 

@@ -36,7 +36,7 @@ module OnlineKitchen
           JSON.parse(response.body)['responses'][0]['request_id']
         end
 
-        wait_for_machine_released(config, request_id)
+        wait_for_request_completion(config, request_id)
       end
 
       def equip_machine_deployed?(name)
@@ -75,6 +75,25 @@ module OnlineKitchen
         end
       end
 
+      def equip_create_clean_snapshot(name)
+        config = OnlineKitchen.config.rest_config
+        machine_id = /.*\-([^\-]*)/.match(name)[1]
+        uri = URI("#{config[:service_endpoint]}machines/#{machine_id}/snapshots")
+        OnlineKitchen.logger.debug("creating clean snapshot")
+        req1 = Net::HTTP::Post.new(uri)
+        req1.content_type = 'application/json'
+        req1.body = '{"name":"clean"}'
+        req1.basic_auth config[:username], config[:password]
+        request_id = Net::HTTP.start(uri.hostname, uri.port, config.http_opts.symbolize_keys) do |http|
+          response = http.request(req1)
+          JSON.parse(response.body)['responses'][0]['request_id']
+        end
+
+        OnlineKitchen.logger.debug("waiting for clean snapshot to be created")
+        wait_for_request_completion(config, request_id)
+        OnlineKitchen.logger.debug("waiting for clean snapshot to be created done")
+      end
+ 
       def equip_machine_ip(name)
         config = OnlineKitchen.config.rest_config
         machine_id = /.*\-([^\-]*)/.match(name)[1]
@@ -111,10 +130,11 @@ module OnlineKitchen
         end
       end
 
-      def wait_for_machine_released(config, request_id)
+      def wait_for_request_completion(config, request_id)
         uri_get_request = URI("#{config[:service_endpoint]}requests/#{request_id}")
 
         config[:max_request_retries].times.each do
+          OnlineKitchen.logger.debug("getting request info for request_id: #{request_id}")
           response = get_response(config, uri_get_request)
 
           begin
@@ -122,7 +142,12 @@ module OnlineKitchen
           rescue NoMethodError
             OnlineKitchen.logger.debug("response: #{response.body} cannot be examined")
           end
-
+        rescue Net::ReadTimeout
+          OnlineKitchen.logger.warn(
+            "Exception ReadTimeout occurred when comm to backend, delay to be extended"
+          )
+          sleep(Random.new.rand(config[:try_delay_min]*2..config[:try_delay_max]*2))
+        ensure
           sleep(Random.new.rand(config[:try_delay_min]..config[:try_delay_max]))
         end
 

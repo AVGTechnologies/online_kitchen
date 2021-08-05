@@ -60,6 +60,9 @@ module OnlineKitchen
         return true if machine['responses'][0]['result']['state'] == 'deployed'
 
         false
+	  rescue JSON::ParserError, Net::OpenTimeout, Net::ReadTimeout, Net::WriteTimeout => e
+	    OnlineKitchen.logger.warn("Exception occured: #{e.inspect}")
+	    return false
       end
 
       def equip_machine_start(name)

@@ -6,3 +6,4 @@
 /db/db_test.sqlite3
 /log/*log
 /db/db_production.sqlite3
+/run_*

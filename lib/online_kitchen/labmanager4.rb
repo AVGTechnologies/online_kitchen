@@ -13,6 +13,9 @@ module OnlineKitchen
   class LabManager4
     attr_reader :vm
 
+    class DeployError < StandardError
+    end
+
     class << self
       def create(opts = {})
         new.provision_machine(opts)
@@ -43,6 +46,7 @@ module OnlineKitchen
         config = OnlineKitchen.config.rest_config
         machine_id = /.*\-([^\-]*)/.match(name)[1]
         uri_get_machine = URI("#{config[:service_endpoint]}machines/#{machine_id}")
+        OnlineKitchen.logger.debug("equip_machine_deployed? url: #{uri_get_machine}")
 
         machine = Net::HTTP.start(
           uri_get_machine.host,
@@ -53,16 +57,17 @@ module OnlineKitchen
           request.basic_auth config[:username], config[:password]
 
           response = http.request request # Net::HTTPResponse object
-          OnlineKitchen.logger.debug(response.body)
+          OnlineKitchen.logger.debug("equip_machine_deployed? resp body: #{response.body}")
           JSON.parse(response.body)
         end
 
         return true if machine['responses'][0]['result']['state'] == 'deployed'
 
         false
-	  rescue JSON::ParserError, Net::OpenTimeout, Net::ReadTimeout, Net::WriteTimeout => e
-	    OnlineKitchen.logger.warn("Exception occured: #{e.inspect}")
-	    return false
+	    rescue JSON::ParserError, Net::OpenTimeout, Net::ReadTimeout, Net::WriteTimeout, NoMethodError => e
+	      OnlineKitchen.logger.warn("Exception occured: #{e.inspect}")
+        OnlineKitchen.logger.warn(machine) if machine
+	      return false
       end
 
       def equip_machine_start(name)
@@ -96,7 +101,7 @@ module OnlineKitchen
         wait_for_request_completion(config, request_id)
         OnlineKitchen.logger.debug("waiting for clean snapshot to be created done")
       end
- 
+
       def equip_machine_ip(name)
         config = OnlineKitchen.config.rest_config
         machine_id = /.*\-([^\-]*)/.match(name)[1]
@@ -193,9 +198,15 @@ module OnlineKitchen
         http.request(req1)
       end
 
-      request_id = JSON.parse(res.body)['responses'][0]['request_id']
-      OnlineKitchen.logger.debug("post_request_id: #{request_id}")
-      request_id
+      info = JSON.parse(res.body)['responses'][0]
+      if info.key?('request_id') then
+        request_id = JSON.parse(res.body)['responses'][0]['request_id']
+        OnlineKitchen.logger.debug("post_request_id: #{request_id}")
+        request_id
+      else
+        OnlineKitchen.logger.debug("deploy machine: error getting request_id: #{res.body}")
+        raise DeployError
+      end
     end
 
     def get_machine_id(config, request_id)

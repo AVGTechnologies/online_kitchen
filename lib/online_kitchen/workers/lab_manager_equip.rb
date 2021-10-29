@@ -38,7 +38,7 @@ module OnlineKitchen
       ::Raven.capture_exception(e)
       OnlineKitchen.logger.warn("PG::UnableToSend occurred, job: #{equip_arg} re-enqueued")
       self.class.perform_in(rand(5..12).seconds, equip_arg)
-    rescue Exception => e
+    rescue StandardError => e
       ::Raven.capture_exception(e)
       OnlineKitchen.logger.warn(
         "General exception occurred, job: #{equip_arg}, exc: #{e.class}, mess: #{e.message}"
@@ -78,7 +78,7 @@ module OnlineKitchen
     end
 
     def perform_start(machine, equip_arg)
-      OnlineKitchen::LabManager4.equip_machine_start(machine.provider_id)
+      OnlineKitchen::LabManager4.equip_machine_start(machine.provider_id, cluster: machine.cluster)
       self.class.perform_in(
         rand(2..7).seconds,
         equip_arg.merge('started' => true)
@@ -86,8 +86,11 @@ module OnlineKitchen
     end
 
     def perform_create_clean_snapshot(machine, equip_arg)
-      OnlineKitchen::LabManager4.equip_create_clean_snapshot(machine.provider_id)
-    rescue Exception => e
+      OnlineKitchen::LabManager4.equip_create_clean_snapshot(
+        machine.provider_id,
+        cluster: machine.cluster
+      )
+    rescue StandardError => e
       ::Raven.capture_exception(e)
       OnlineKitchen.logger.warn(
         "clean snapshot not created, job: #{equip_arg}, exc: #{e.class}, mess: #{e.message}"
@@ -102,7 +105,10 @@ module OnlineKitchen
 
     def perform_ipwait(machine, machine_id, equip_arg)
       time = Benchmark.realtime do
-        info = OnlineKitchen::LabManager4.equip_machine_ip(machine.provider_id)
+        info = OnlineKitchen::LabManager4.equip_machine_ip(
+          machine.provider_id,
+          cluster: machine.cluster
+        )
         if !!info == info
           self.class.perform_in(rand(1..3).seconds, equip_arg)
           OnlineKitchen.logger.info "Machine id:#{machine_id} equipment rescheduled."

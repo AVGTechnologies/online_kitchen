@@ -42,13 +42,14 @@ module OnlineKitchen
         vms_folder: machine.folder_name,
         image: machine.image,
         requestor: machine.user.name,
-        job_id: machine.job_id
+        job_id: machine.job_id,
+        cluster: machine.cluster
       }
     end
 
     def perform_deploy(machine, machine_id, deploy_arg)
       deploy(machine)
-      if machine.state != 'failed' then
+      if machine.state != 'failed'
         OnlineKitchen.logger.info "Machine id:#{machine_id} is being deployed."
         self.class.perform_in(rand(1..5).seconds, deploy_arg.merge('deployed' => true))
       end
@@ -98,11 +99,13 @@ module OnlineKitchen
     def deploy(machine)
       time = Benchmark.realtime do
         state = 'ok'
-        vm = begin
-          OnlineKitchen::LabManager4.create(builder(machine))
-        rescue OnlineKitchen::LabManager4::DeployError => err
-          state = 'failed'
-        end
+        OnlineKitchen.logger.info("\e[1;31m MACHINE CLUSTER: #{machine.cluster} \e[0m")
+        vm =
+          begin
+            OnlineKitchen::LabManager4.create(builder(machine))
+          rescue OnlineKitchen::LabManager4::DeployError
+            state = 'failed'
+          end
         machine.reload
 
         machine.ip = 'n/a now'
@@ -117,7 +120,11 @@ module OnlineKitchen
       result = false
       time = Benchmark.realtime do
         machine.reload
-        if OnlineKitchen::LabManager4.equip_machine_deployed?(machine.provider_id)
+        if OnlineKitchen::LabManager4
+           .equip_machine_deployed?(
+             machine.provider_id,
+             cluster: machine.cluster
+           )
           machine.state = 'deployed'
           machine.save!
           result = true

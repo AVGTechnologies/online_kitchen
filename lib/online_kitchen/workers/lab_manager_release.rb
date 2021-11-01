@@ -38,7 +38,7 @@ module OnlineKitchen
     def release(machine_id)
       machine = Machine.find(machine_id)
       time = Benchmark.realtime do
-        OnlineKitchen::LabManager4.destroy(machine.provider_id)
+        OnlineKitchen::LabManager4.destroy(machine.provider_id, cluster: machine.cluster)
         machine.update_attributes(state: :deleted)
         configuration = machine.configuration
         machine.destroy!

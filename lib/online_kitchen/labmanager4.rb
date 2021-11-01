@@ -16,6 +16,9 @@ module OnlineKitchen
     class DeployError < StandardError
     end
 
+    class ReleaseError < StandardError
+    end
+
     class << self
       def create(opts = {})
         new.provision_machine(opts)
@@ -37,6 +40,8 @@ module OnlineKitchen
           response = http.request request # Net::HTTPResponse object
           OnlineKitchen.logger.debug(response.body)
           JSON.parse(response.body)['responses'][0]['request_id']
+        rescue Net::OpenTimeout
+          raise ReleaseError
         end
 
         wait_for_request_completion(config, request_id)

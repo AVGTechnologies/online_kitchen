@@ -43,6 +43,8 @@ module OnlineKitchen
         configuration = machine.configuration
         machine.destroy!
         configuration.schedule_destroy if configuration.machines.count.zero?
+      rescue OnlineKitchen::LabManager4::ReleaseError
+        self.class.perform_in(rand(5..9).seconds, machine_id)
       end
       OnlineKitchen.logger.info "Machine id:#{machine_id} destroyed in #{time.round(2)} seconds."
       Metriks.timer('online_kitchen.worker.release').update(time)

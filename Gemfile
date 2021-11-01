@@ -1,10 +1,10 @@
 source 'https://rubygems.org'
 
-gem 'activerecord', '~>4.2.11.1'
+gem 'activerecord', '~>4.2.11.3'
 
 gem 'annotate', '~> 2.6.6'
 
-gem 'rails', '~>4.2.11.1', require: nil
+gem 'rails', '~>4.2.11.3', require: nil
 
 gem 'redis', '4.1.2'
 gem 'redis-namespace', '1.6.0'
@@ -17,7 +17,7 @@ gem 'sidekiq', '5.2.7'
 
 gem 'metriks'
 
-gem 'nokogiri', '~> 1.8.2'
+gem 'nokogiri', '~> 1.11.4'
 gem 'savon', '~> 2.11'
 gem 'sentry-raven' # ,    github: 'getsentry/raven-ruby'
 

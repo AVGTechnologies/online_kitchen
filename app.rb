@@ -49,6 +49,7 @@ module OnlineKitchen
       end
 
       get '/templates' do
+        # TODO: here get resources sidekiq job should be launched
         ProviderTemplate.all.to_json
       end
 
@@ -104,6 +105,22 @@ module OnlineKitchen
             errors: configuration.errors.to_h
           }.to_json
         end
+      end
+
+      get '/resources' do
+        halt 200, {
+          status: :sucess,
+          resources: {
+            foo: {
+              slot_limit: 870,
+              free_slots: 220,
+            },
+            bar: {
+              slot_limit: 20,
+              free_slots: 20,
+            },
+          }
+        }.to_json
       end
     end
 

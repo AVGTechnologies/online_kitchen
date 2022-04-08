@@ -43,7 +43,8 @@ module OnlineKitchen
         image: machine.image,
         requestor: machine.user.name,
         job_id: machine.job_id,
-        cluster: machine.cluster
+        cluster: machine.cluster,
+        env: machine.environment
       }
     end
 

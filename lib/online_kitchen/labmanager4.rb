@@ -205,13 +205,33 @@ module OnlineKitchen
       vm[:name]
     end
 
+    def construct_deploy_body(image, requestor, environment, config)
+      deploy_struct = { labels: ["template:#{image}", "config:inventory_path=#{requestor}"] }
+      if environment.present? && config[:custom_labels].present?
+        OnlineKitchen.logger.debug("\e[1;31m CUSTOM LABELS GONNA BE APPLIED  \e[0m")
+        environment.select { |_k, v| v == 'TRUE' }
+                   .each_with_object(deploy_struct[:labels]) do |(k, _v), o|
+          if config[:custom_labels].key?(k)
+            config[:custom_labels][k].each_with_object(o) { |item, out| out.append(item) }
+          end
+        end
+      else
+        deploy_struct[:labels].append("config:network_interface=#{config[:network_interface]}")
+        OnlineKitchen.logger.debug("\e[1;31m NO CUSTOM LABELS GONNA BE APPLIED  \e[0m")
+      end
+      deploy_struct.to_json
+    end
+
     def deploy_machine(config, vm_options)
       uri_create = URI("#{config[:service_endpoint]}machines/")
       req1 = Net::HTTP::Post.new(uri_create)
       req1.content_type = 'application/json'
-      req1.body = "{\"labels\":[\"template:#{vm_options[:image]}\", \
-                  \"config:network_interface=#{config[:network_interface]}\", \
-                  \"config:inventory_path=#{vm_options[:requestor]}\"]}"
+      req1.body = construct_deploy_body(
+        vm_options[:image],
+        vm_options[:requestor],
+        vm_options[:env],
+        config
+      )
       req1.basic_auth config[:username], config[:password]
       res = Net::HTTP.start(
         uri_create.hostname,

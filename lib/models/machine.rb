@@ -106,14 +106,24 @@ class Machine < ActiveRecord::Base
       self.state = 'destroy_queued'
       save
       run_callbacks :destroy
-      OnlineKitchen::LabManagerRelease.perform_async(id)
+      3.times.each do |try_n|
+        OnlineKitchen::LabManagerRelease.perform_async(id)
+        break
+      rescue Errno::ETIMEDOUT
+        OnlineKitchen.logger.warn("problem with scheduling deletion of machine: #{id}, try: #{try_n}")
+      end
       freeze
     end
   end
 
   def schedule_destroy
     OnlineKitchen.logger.info "Scheduling releasing for machine: #{id}"
-    OnlineKitchen::LabManagerRelease.perform_async(id)
+    3.times.each do |try_n|
+      OnlineKitchen::LabManagerRelease.perform_async(id)
+      break
+    rescue Errno::ETIMEDOUT
+      OnlineKitchen.logger.warn("problem with scheduling deletion of machine: #{id}, try: #{try_n}")
+    end
     update_attributes(state: :destroy_queued)
   end
 
@@ -121,7 +131,13 @@ class Machine < ActiveRecord::Base
 
   def schedule_provision_vm
     OnlineKitchen.logger.info "Scheduling provision for machine: #{id}"
-    OnlineKitchen::LabManagerDeploy.perform_async('machine_id' => id, 'deployed' => false)
+    3.times.each do |try_n|
+      OnlineKitchen::LabManagerDeploy.perform_async('machine_id' => id, 'deployed' => false)
+      OnlineKitchen.logger.info "Provision schedulled for machine: #{id}"
+      break
+    rescue Errno::ETIMEDOUT
+      OnlineKitchen.logger.warn("problem with provision scheduling of machine: #{id}, try: #{try_n}")
+    end
   end
 
   def environment_has_allowed_structure

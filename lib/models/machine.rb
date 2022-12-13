@@ -29,7 +29,7 @@ class Machine < ActiveRecord::Base
 
   validates :state, inclusion: { in: %w[queued deployed ready destroy_queued deleted failed] }
   validates :provider_id, presence: true, if:  ->(s) { s.state == 'ready' }
-  validate :environment_has_allowed_structure
+  #validate :environment_has_allowed_structure
   validate :image_is_valid
 
   after_commit :schedule_provision_vm, on: :create

@@ -13,7 +13,7 @@ gem 'sqlite3'
 
 gem 'pg', '~>0.21'
 
-gem 'sidekiq', '5.2.7'
+gem 'sidekiq', '6.0.7'
 
 gem 'metriks'
 

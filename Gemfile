@@ -13,7 +13,7 @@ gem 'sqlite3'
 
 gem 'pg', '~>0.21'
 
-gem 'sidekiq', '6.0.7'
+gem 'sidekiq', '5.2.7'
 
 gem 'metriks'
 
@@ -23,7 +23,7 @@ gem 'sentry-raven' # ,    github: 'getsentry/raven-ruby'
 
 gem 'strip_attributes', '~> 1.7.0'
 
-gem 'rack', '2.0.1'
+gem 'rack', '~>1.6.2'
 gem 'rack-contrib'
 gem 'sinatra', '~> 1.4.6', require: 'sinatra/base' # see https://github.com/resque/resque/issues/934
 gem 'sinatra-contrib', '~> 1.4.4'
